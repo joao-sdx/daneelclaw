@@ -1,5 +1,6 @@
 package org.daneel.chat;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +15,7 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping("/chat")
-    public ChatResponse chat(@RequestBody ChatRequest request) {
+    public ChatResponse chat(@Valid @RequestBody ChatRequest request) {
         log.info("chat_request sessionId={}", request.sessionId());
         var reply = chatService.chat(request.sessionId(), request.message());
         return new ChatResponse(reply);

@@ -33,12 +33,10 @@ class ChatControllerTest {
     }
 
     @Test
-    void postChat_returns200ForEmptyMessage() throws Exception {
-        when(chatService.chat("s1", "")).thenReturn("Please say something");
-
+    void postChat_returns400ForEmptyMessage() throws Exception {
         mockMvc.perform(post("/chat")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"sessionId\":\"s1\",\"message\":\"\"}"))
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest());
     }
 }
