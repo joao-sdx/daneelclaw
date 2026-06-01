@@ -1,0 +1,33 @@
+package org.daneel.tool;
+
+import org.junit.jupiter.api.Test;
+
+import java.time.ZoneId;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class LocalTimezoneToolTest {
+
+    private final LocalTimezoneTool tool = new LocalTimezoneTool();
+
+    @Test
+    void execute_returnsSystemTimezone() {
+        assertThat(tool.execute(Map.of())).isEqualTo(ZoneId.systemDefault().getId());
+    }
+
+    @Test
+    void name_isLocalTimezone() {
+        assertThat(tool.name()).isEqualTo("local_timezone");
+    }
+
+    @Test
+    void description_isNotBlank() {
+        assertThat(tool.description()).isNotBlank();
+    }
+
+    @Test
+    void properties_isEmpty() {
+        assertThat(tool.properties()).isEmpty();
+    }
+}
