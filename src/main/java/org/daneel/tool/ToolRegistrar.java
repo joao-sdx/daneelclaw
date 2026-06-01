@@ -9,9 +9,10 @@ import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -52,23 +53,23 @@ public class ToolRegistrar {
     }
 
     private String buildSchema(List<ToolProperty> properties) {
-        if (properties.isEmpty()) {
-            return "{\"type\":\"object\",\"properties\":{}}";
+        var schemaObj = new LinkedHashMap<String, Object>();
+        schemaObj.put("type", "object");
+        var propsMap = new LinkedHashMap<String, Object>();
+        var requiredList = new ArrayList<String>();
+        for (var p : properties) {
+            var propDef = new LinkedHashMap<String, String>();
+            propDef.put("type", p.type());
+            propDef.put("description", p.description());
+            propsMap.put(p.name(), propDef);
+            if (p.required()) {
+                requiredList.add(p.name());
+            }
         }
-        var props = properties.stream()
-                .map(p -> "\"" + p.name() + "\":{\"type\":\"" + p.type()
-                        + "\",\"description\":\"" + p.description() + "\"}")
-                .collect(Collectors.joining(","));
-        var required = properties.stream()
-                .filter(ToolProperty::required)
-                .map(p -> "\"" + p.name() + "\"")
-                .collect(Collectors.joining(","));
-        var schema = new StringBuilder("{\"type\":\"object\",\"properties\":{")
-                .append(props)
-                .append("}");
-        if (!required.isEmpty()) {
-            schema.append(",\"required\":[").append(required).append("]");
+        schemaObj.put("properties", propsMap);
+        if (!requiredList.isEmpty()) {
+            schemaObj.put("required", requiredList);
         }
-        return schema.append("}").toString();
+        return objectMapper.valueToTree(schemaObj).toString();
     }
 }

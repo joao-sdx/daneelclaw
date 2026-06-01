@@ -51,7 +51,7 @@ class ToolRegistrarTest {
         var schema = registrar.getCallbacks()[0].getToolDefinition().inputSchema();
 
         assertThat(schema).contains("\"timezone\"");
-        assertThat(schema).contains("\"required\"");
+        assertThat(schema).contains("[\"timezone\"]");
     }
 
     private record StubTool(String name, String description,

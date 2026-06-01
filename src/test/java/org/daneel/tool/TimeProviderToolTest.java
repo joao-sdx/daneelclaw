@@ -35,6 +35,11 @@ class TimeProviderToolTest {
     }
 
     @Test
+    void execute_returnsErrorForMissingTimezone() {
+        assertThat(tool.execute(Map.of())).startsWith("Error:");
+    }
+
+    @Test
     void name_isTimeProvider() {
         assertThat(tool.name()).isEqualTo("time_provider");
     }

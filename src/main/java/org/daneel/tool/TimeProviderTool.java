@@ -32,8 +32,11 @@ public class TimeProviderTool implements DaneelToolInterface {
 
     @Override
     public String execute(Map<String, Object> params) {
-        var timezone = params.get("timezone").toString();
-        return ZonedDateTime.now(ZoneId.of(timezone))
+        var raw = params.get("timezone");
+        if (raw == null || raw.toString().isBlank()) {
+            return "Error: timezone parameter is required.";
+        }
+        return ZonedDateTime.now(ZoneId.of(raw.toString()))
                 .format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
     }
 }
