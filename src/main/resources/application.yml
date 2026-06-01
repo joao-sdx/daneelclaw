@@ -16,3 +16,6 @@ daneel:
   tools:
     speak:
       command: "say -v Thomas {text}"
+  scheduler:
+    tasks-dir: "./tasks"
+    check-interval-ms: 60000
