@@ -1,5 +1,6 @@
 package org.daneel.chat;
 
+import org.daneel.tool.ToolRegistrar;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestClientCustomizer;
@@ -16,8 +17,12 @@ class ChatConfig {
 
     @Bean
     ChatClient chatClient(ChatClient.Builder builder,
-                          @Value("classpath:system-prompt.md") Resource systemPrompt) {
-        return builder.defaultSystem(systemPrompt).build();
+                          @Value("classpath:system-prompt.md") Resource systemPrompt,
+                          ToolRegistrar toolRegistrar) {
+        return builder
+                .defaultSystem(systemPrompt)
+                .defaultToolCallbacks(toolRegistrar.getCallbacks())
+                .build();
     }
 
     @Bean
