@@ -70,4 +70,17 @@ class PromptResolverTest {
         assertThatThrownBy(() -> resolver.resolve(task, Instant.now(), Instant.now()))
                 .isInstanceOf(UncheckedIOException.class);
     }
+
+    @Test
+    void resolve_stripsFrontmatterBeforeSubstitution() throws Exception {
+        Files.writeString(tempDir.resolve("task-1.md"),
+                "---\nsummary: Test task.\n---\nTriggered at {trigger_time_gmt}");
+        var result = resolver.resolve(task,
+                Instant.parse("2026-06-01T14:00:00Z"),
+                Instant.parse("2026-06-01T14:00:03Z"));
+        assertThat(result).doesNotContain("---");
+        assertThat(result).doesNotContain("summary:");
+        assertThat(result).startsWith("Triggered at");
+        assertThat(result).contains("2026-06-01T14:00:00Z");
+    }
 }

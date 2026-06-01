@@ -27,8 +27,8 @@ public class PromptResolver {
     public String resolve(PlannedTask task, Instant triggerTime, Instant currentTime) {
         var file = Path.of(tasksDir, task.promptFile());
         try {
-            var content = Files.readString(file);
-            return content
+            var body = PromptDocument.parse(Files.readString(file)).body();
+            return body
                     .replace("{trigger_time_gmt}", DateTimeFormatter.ISO_INSTANT.format(triggerTime))
                     .replace("{current_time_gmt}", DateTimeFormatter.ISO_INSTANT.format(currentTime))
                     .replace("{trigger_time_local}", formatLocal(triggerTime))
