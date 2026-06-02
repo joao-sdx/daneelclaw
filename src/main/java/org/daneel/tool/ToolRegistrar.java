@@ -55,9 +55,13 @@ public class ToolRegistrar {
     var propsMap = new LinkedHashMap<String, Object>();
     var requiredList = new ArrayList<String>();
     for (var p : properties) {
-      var propDef = new LinkedHashMap<String, String>();
+      var propDef = new LinkedHashMap<String, Object>();
       propDef.put("type", p.type());
       propDef.put("description", p.description());
+      if ("array".equals(p.type())) {
+        var elementType = p.itemType() != null ? p.itemType() : "string";
+        propDef.put("items", Map.of("type", elementType));
+      }
       propsMap.put(p.name(), propDef);
       if (p.required()) {
         requiredList.add(p.name());

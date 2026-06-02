@@ -53,6 +53,19 @@ class ToolRegistrarTest {
     assertThat(schema).contains("[\"timezone\"]");
   }
 
+  @Test
+  void getCallbacks_arrayPropertyIncludesItemsDefinition() {
+    var prop = new ToolProperty("items", "List of items", "array", true);
+    var tool = new StubTool("fan_tool", "Fan tool", List.of(prop), "ok");
+    var registrar = new ToolRegistrar(List.of(tool), objectMapper);
+
+    var schema = registrar.getCallbacks()[0].getToolDefinition().inputSchema();
+
+    assertThat(schema).contains("\"type\":\"array\"");
+    assertThat(schema).contains("\"items\"");
+    assertThat(schema).contains("\"type\":\"string\"");
+  }
+
   private record StubTool(
       String name, String description, List<ToolProperty> properties, String result)
       implements DaneelToolInterface {

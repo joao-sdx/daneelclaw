@@ -46,7 +46,7 @@ DaneelClaw is a personal AI assistant: a chat interface backed by a local LLM (v
 
 `DaneelToolInterface` is the contract for all tools: name, description, `List<ToolProperty>`, and an `execute(Map<String,Object>)` method. `ToolRegistrar` is a `@Component` that collects all `DaneelToolInterface` beans at startup, generates a JSON schema from their `ToolProperty` metadata, and produces a `ToolCallback[]` array that `ChatConfig` passes to the main `ChatClient`.
 
-Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskListTool`, `TaskGetTool`, `PromptListTool`, `PromptCreateTool`, `TimeProviderTool`, `LocalTimezoneTool`, `SpeakTool` (macOS `say` command).
+Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskListTool`, `TaskGetTool`, `PromptListTool`, `PromptCreateTool`, `TimeProviderTool`, `LocalTimezoneTool`, `SpeakTool` (macOS `say` command), `SpawnPerItemTool` (fan-out: spawns one background sub-run per item in a list).
 
 **Adding a new tool:** implement `DaneelToolInterface`, annotate with `@Component`, define your `ToolProperty` list. `ToolRegistrar` picks it up automatically.
 
@@ -70,4 +70,6 @@ Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskLi
 
 ## Apache Camel
 
-`camel-spring-boot-starter` is on the classpath but no Camel routes are defined yet. `TaskPoller` uses plain Spring `@Scheduled`. Camel is available if needed for EIP-style routing in future.
+Two Camel routes are active:
+- `TaskPollRoute` (`task-poll`) — timer-driven, splits due tasks, calls `TaskPoller.run` per task.
+- `FanOutRoute` (`fan-out`) — `seda:fanout` consumer (1 worker), calls `FanOutRunner.run` per item enqueued by `SpawnPerItemTool`.
