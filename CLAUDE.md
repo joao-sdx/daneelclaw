@@ -58,6 +58,10 @@ Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskLi
 - `daneel.scheduler.check-interval-ms` — polling interval (default 60000)
 - `daneel.chat.compact.char-threshold` — auto-compaction threshold (default 8000)
 - `daneel.chat.compact.keep-last-messages` — messages retained after compaction (default 4)
+- `daneel.telegram.enabled` — set via `TELEGRAM_ENABLED=true` env var to activate the Telegram channel (default `false`)
+- `daneel.telegram.bot-token` — set via `TELEGRAM_BOT_TOKEN` env var; required when enabled
+- `daneel.telegram.allowed-chat-ids` — set via `TELEGRAM_ALLOWED_CHAT_IDS=<id1>,<id2>` env var; if empty, all chats allowed
+- `daneel.telegram.poll-delay-ms` — polling interval in ms (default 1000)
 
 `src/main/resources/system-prompt.md` — the LLM system prompt (currently French-language, concise/friendly persona).
 
@@ -70,6 +74,7 @@ Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskLi
 
 ## Apache Camel
 
-Two Camel routes are active:
+Three Camel routes are active:
 - `TaskPollRoute` (`task-poll`) — timer-driven, splits due tasks, calls `TaskPoller.run` per task.
 - `FanOutRoute` (`fan-out`) — `seda:fanout` consumer (1 worker), calls `FanOutRunner.run` per item enqueued by `SpawnPerItemTool`.
+- `TelegramRoute` (`telegram-inbound`) — long-polls Telegram for text messages; only registered when `daneel.telegram.enabled=true`. Filters by allowlist, delegates to `TelegramRunner` which calls `ChatService.chat("tg-<chatId>", text)`, and sends the reply back (chunked to ≤4096 chars per Telegram's limit).
