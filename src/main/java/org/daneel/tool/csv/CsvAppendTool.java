@@ -5,6 +5,7 @@ import java.nio.file.NoSuchFileException;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.daneel.tool.DaneelToolInterface;
 import org.daneel.tool.ToolProperty;
 import org.daneel.tool.file.SandboxAccessException;
@@ -43,6 +44,7 @@ public class CsvAppendTool implements DaneelToolInterface {
   }
 
   @Override
+  @SneakyThrows
   public String execute(Map<String, Object> params) {
     var pathRaw = params.get("path");
     if (pathRaw == null || pathRaw.toString().isBlank()) {

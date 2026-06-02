@@ -75,8 +75,8 @@ public class CsvFilterCopyTool implements DaneelToolInterface {
     if (!(tgtColsRaw instanceof List<?> tgtList) || tgtList.isEmpty()) {
       return "Error: targetColumns must be a non-empty list.";
     }
-    var sourceColumns = ((List<?>) srcColsRaw).stream().map(Object::toString).toList();
-    var targetColumns = ((List<?>) tgtColsRaw).stream().map(Object::toString).toList();
+    var sourceColumns = srcList.stream().map(Object::toString).toList();
+    var targetColumns = tgtList.stream().map(Object::toString).toList();
     if (sourceColumns.size() != targetColumns.size()) {
       return "Error: sourceColumns and targetColumns must have the same length.";
     }
