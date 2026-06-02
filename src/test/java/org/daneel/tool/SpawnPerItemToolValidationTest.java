@@ -1,15 +1,20 @@
 package org.daneel.tool;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.camel.ProducerTemplate;
 import org.daneel.task.FanOutItem;
+import org.daneel.task.FanOutTracker;
+import org.daneel.task.FanOutTracker.BatchSnapshot;
 import org.daneel.tool.spawn.SpawnPerItemTool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,19 +24,22 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class SpawnPerItemToolTest {
+class SpawnPerItemToolValidationTest {
 
   @Mock private ProducerTemplate producerTemplate;
+  @Mock private FanOutTracker tracker;
 
   private SpawnPerItemTool tool;
 
   @BeforeEach
   void setUp() {
-    tool = new SpawnPerItemTool(producerTemplate);
+    tool = new SpawnPerItemTool(producerTemplate, tracker, 30000L);
   }
 
   @Test
   void execute_spawnsOneSubRunPerItem() {
+    when(tracker.awaitCompletion(any(), anyLong())).thenReturn(true);
+    when(tracker.snapshot(any())).thenReturn(new BatchSnapshot(3, 3, 0, true));
     var params =
         Map.<String, Object>of(
             "prompt",
@@ -41,7 +49,7 @@ class SpawnPerItemToolTest {
 
     var result = tool.execute(params);
 
-    assertThat(result).isEqualTo("Spawned 3 sub-runs.");
+    assertThat(result).contains("3");
     var captor = ArgumentCaptor.forClass(FanOutItem.class);
     verify(producerTemplate, times(3)).sendBody(eq("seda:fanout"), captor.capture());
     var fanOutItems = captor.getAllValues();
@@ -52,6 +60,8 @@ class SpawnPerItemToolTest {
 
   @Test
   void execute_sessionIdsHaveExpectedPattern() {
+    when(tracker.awaitCompletion(any(), anyLong())).thenReturn(true);
+    when(tracker.snapshot(any())).thenReturn(new BatchSnapshot(2, 2, 0, true));
     var params =
         Map.<String, Object>of("prompt", "Handle: {item}", "items", List.of("first", "second"));
 

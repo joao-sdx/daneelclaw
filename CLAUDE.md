@@ -46,7 +46,7 @@ DaneelClaw is a personal AI assistant: a chat interface backed by a local LLM (v
 
 `DaneelToolInterface` is the contract for all tools: name, description, `List<ToolProperty>`, and an `execute(Map<String,Object>)` method. `ToolRegistrar` is a `@Component` that collects all `DaneelToolInterface` beans at startup, generates a JSON schema from their `ToolProperty` metadata, and produces a `ToolCallback[]` array that `ChatConfig` passes to the main `ChatClient`.
 
-Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskListTool`, `TaskGetTool`, `PromptListTool`, `PromptCreateTool`, `TimeProviderTool`, `LocalTimezoneTool`, `SpeakTool` (macOS `say` command), `SpawnPerItemTool` (fan-out: spawns one background sub-run per item in a list), `FileReadTool`, `FileWriteTool`, `FileDeleteTool`, `FileMoveTool`, `FilePropertiesTool`, `DirectoryCreateTool`, `DirectoryListTool` (sandboxed filesystem access — all paths relative to the configured root, traversal outside root is rejected).
+Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskListTool`, `TaskGetTool`, `PromptListTool`, `PromptCreateTool`, `TimeProviderTool`, `LocalTimezoneTool`, `SpeakTool` (macOS `say` command), `SpawnPerItemTool` (fan-out: spawns one sub-run per item, blocks until all finish or timeout, returns a summary; if it times out returns a `batch_id` to poll), `FanOutStatusTool` (name `fanout_status`: check progress of a timed-out batch by `batch_id`), `FileReadTool`, `FileWriteTool`, `FileDeleteTool`, `FileMoveTool`, `FilePropertiesTool`, `DirectoryCreateTool`, `DirectoryListTool` (sandboxed filesystem access — all paths relative to the configured root, traversal outside root is rejected).
 
 `SandboxFileSystem` is a shared `@Component` helper (not a tool) that holds the absolute root path and enforces containment: `resolve(userPath)` normalizes the candidate and throws `SandboxAccessException` if it escapes the root. All filesystem tools inject it.
 
@@ -65,6 +65,7 @@ Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskLi
 - `daneel.telegram.allowed-chat-ids` — set via `TELEGRAM_ALLOWED_CHAT_IDS=<id1>,<id2>` env var; if empty, all chats allowed
 - `daneel.telegram.poll-delay-ms` — polling interval in ms (default 1000)
 - `daneel.tools.files.root` — sandbox root directory for filesystem tools (`./rootdir` by default; auto-created on startup)
+- `daneel.tools.spawn.block-timeout-ms` — how long `spawn_per_item` blocks waiting for all sub-runs before returning a poll message (default 30000)
 
 `src/main/resources/system-prompt.md` — the LLM system prompt (currently French-language, concise/friendly persona).
 
@@ -79,5 +80,5 @@ Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskLi
 
 Three Camel routes are active:
 - `TaskPollRoute` (`task-poll`) — timer-driven, splits due tasks, calls `TaskPoller.run` per task.
-- `FanOutRoute` (`fan-out`) — `seda:fanout` consumer (1 worker), calls `FanOutRunner.run` per item enqueued by `SpawnPerItemTool`.
+- `FanOutRoute` (`fan-out`) — `seda:fanout` consumer (1 worker), calls `FanOutRunner.run` per item enqueued by `SpawnPerItemTool`. `FanOutRunner` catches all exceptions internally and records success/failure to `FanOutTracker`; the route's `onException` handler is a backstop only.
 - `TelegramRoute` (`telegram-inbound`) — long-polls Telegram for text messages; only registered when `daneel.telegram.enabled=true`. Filters by allowlist, delegates to `TelegramRunner` which calls `ChatService.chat("tg-<chatId>", text)`, and sends the reply back (chunked to ≤4096 chars per Telegram's limit).

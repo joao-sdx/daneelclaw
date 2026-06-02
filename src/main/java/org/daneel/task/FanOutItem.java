@@ -1,3 +1,3 @@
 package org.daneel.task;
 
-public record FanOutItem(String sessionId, String prompt) {}
+public record FanOutItem(String batchId, String sessionId, String prompt) {}

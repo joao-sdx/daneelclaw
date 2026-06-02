@@ -20,6 +20,8 @@ daneel:
       command: "say -v Thomas {text}"
     files:
       root: "./rootdir"
+    spawn:
+      block-timeout-ms: 30000
   scheduler:
     tasks-dir: "./tasks"
     check-interval-ms: 60000

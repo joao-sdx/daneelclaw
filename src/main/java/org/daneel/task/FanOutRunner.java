@@ -12,10 +12,17 @@ import org.springframework.stereotype.Component;
 public class FanOutRunner {
 
   private final ChatService chatService;
+  private final FanOutTracker tracker;
 
   public void run(@Body FanOutItem item) {
     log.info("fanout_starting session={}", item.sessionId());
-    chatService.chat(item.sessionId(), item.prompt());
-    log.info("fanout_completed session={}", item.sessionId());
+    try {
+      chatService.chat(item.sessionId(), item.prompt());
+      tracker.recordSuccess(item.batchId());
+      log.info("fanout_completed session={}", item.sessionId());
+    } catch (Exception ex) {
+      log.error("fanout_item_failed session={}", item.sessionId(), ex);
+      tracker.recordFailure(item.batchId());
+    }
   }
 }
