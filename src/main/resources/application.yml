@@ -7,7 +7,7 @@ spring:
       api-key: not-needed
       chat:
         options:
-          model: ${LMSTUDIO_MODEL:local-model}
+          model: ${LMSTUDIO_MODEL:nvidia/nemotron-3-nano-4b}
 
 server:
   port: 8080
@@ -19,3 +19,7 @@ daneel:
   scheduler:
     tasks-dir: "./tasks"
     check-interval-ms: 60000
+  chat:
+    compact:
+      char-threshold: 8000
+      keep-last-messages: 4
