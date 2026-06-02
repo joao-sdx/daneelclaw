@@ -23,7 +23,7 @@ class ChatControllerTest {
 
     @Test
     void postChat_returnsServiceReply() throws Exception {
-        when(chatService.chat("s1", "hello")).thenReturn("Hi there");
+        when(chatService.chat("s1", "hello")).thenReturn(new ChatResponse("Hi there", null));
 
         mockMvc.perform(post("/chat")
                         .contentType(MediaType.APPLICATION_JSON)

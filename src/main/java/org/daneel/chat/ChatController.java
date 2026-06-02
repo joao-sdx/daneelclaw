@@ -17,7 +17,6 @@ public class ChatController {
     @PostMapping("/chat")
     public ChatResponse chat(@Valid @RequestBody ChatRequest request) {
         log.info("chat_request sessionId={}", request.sessionId());
-        var reply = chatService.chat(request.sessionId(), request.message());
-        return new ChatResponse(reply);
+        return chatService.chat(request.sessionId(), request.message());
     }
 }
