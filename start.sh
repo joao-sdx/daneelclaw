@@ -8,4 +8,4 @@ if lsof -ti:"$PORT" &>/dev/null; then
   sleep 1
 fi
 
-./mvnw spring-boot:run
+./mvnw spring-boot:run -DLMSTUDIO_MODEL=nvidia/nemotron-3-nano-4b

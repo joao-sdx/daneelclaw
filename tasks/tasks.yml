@@ -1,8 +1,8 @@
 ---
 tasks:
-- id: "hello-paris"
-  name: "Say hello at 17h Paris"
-  promptFile: "hello.md"
-  nextRunAt: "2026-06-01T16:00:00Z"
-  recurringIntervalMinutes: 60
-  enabled: true
+  - id: "hello-paris"
+    name: "Say hello at 17h Paris"
+    promptFile: "hello.md"
+    nextRunAt: "2026-06-01T17:00:00Z"
+    recurringIntervalMinutes: null
+    enabled: false
