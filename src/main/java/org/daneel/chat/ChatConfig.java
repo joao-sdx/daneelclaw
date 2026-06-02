@@ -2,6 +2,7 @@ package org.daneel.chat;
 
 import org.daneel.tool.ToolRegistrar;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.tool.ToolCallback;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestClientCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +36,7 @@ class ChatConfig {
     ChatClient summaryChatClient(ChatClient.Builder builder) {
         return builder
                 .defaultSystem(SUMMARY_SYSTEM)
+                .defaultToolCallbacks(new ToolCallback[0])   // explicit: no tools during summarization
                 .build();
     }
 

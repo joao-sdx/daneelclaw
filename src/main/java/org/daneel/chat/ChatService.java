@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,8 +43,6 @@ public class ChatService {
 
     public ChatResponse chat(String sessionId, String userMessage) {
         var trimmed = userMessage.trim();
-        var messages = history.computeIfAbsent(
-                sessionId, k -> Collections.synchronizedList(new ArrayList<>()));
 
         if (trimmed.equalsIgnoreCase(CLEAR)) {
             history.remove(sessionId);
@@ -51,10 +50,14 @@ public class ChatService {
             return new ChatResponse("Conversation réinitialisée.", "cleared");
         }
 
+        var messages = history.computeIfAbsent(
+                sessionId, k -> Collections.synchronizedList(new ArrayList<>()));
+
         if (trimmed.equalsIgnoreCase(COMPACT)) {
-            compact(messages);
-            log.info("chat_compact_manual sessionId={} historySize={}", sessionId, messages.size());
-            return new ChatResponse("Conversation compactée.", "compacted");
+            var compacted = compact(messages);
+            log.info("chat_compact_manual sessionId={} historySize={} compacted={}", sessionId, messages.size(), compacted);
+            var msg = compacted ? "Conversation compactée." : "Rien à compacter.";
+            return new ChatResponse(msg, "compacted");
         }
 
         if (totalChars(messages) > charThreshold) {
@@ -70,9 +73,9 @@ public class ChatService {
         return new ChatResponse(reply, null);
     }
 
-    private void compact(List<Message> messages) {
+    private boolean compact(List<Message> messages) {
         if (messages.size() <= keepLast) {
-            return;
+            return false;
         }
         var splitAt = messages.size() - keepLast;
         var older = new ArrayList<>(messages.subList(0, splitAt));
@@ -82,8 +85,9 @@ public class ChatService {
                 .collect(Collectors.joining("\n"));
         var summary = summaryChatClient.prompt().user(transcript).call().content();
         messages.clear();
-        messages.add(new UserMessage(SUMMARY_PREFIX + (summary != null ? summary : "")));
+        messages.add(new SystemMessage(SUMMARY_PREFIX + (summary != null ? summary : "")));
         messages.addAll(tail);
+        return true;
     }
 
     private int totalChars(List<Message> messages) {
