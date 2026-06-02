@@ -28,6 +28,10 @@ async function sendMessage() {
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
+        if (data.action === 'cleared') {
+            messagesEl.replaceChildren();
+            return;
+        }
         addBubble(data.message, 'assistant');
     } catch {
         addBubble('Something went wrong. Is LMStudio running?', 'error');
