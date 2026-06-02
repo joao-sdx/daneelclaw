@@ -10,7 +10,7 @@ spring:
       chat:
         options:
           model: ${LMSTUDIO_MODEL:nvidia/nemotron-3-nano-4b}
-
+          
 server:
   port: 8080
 
@@ -18,6 +18,8 @@ daneel:
   tools:
     speak:
       command: "say -v Thomas {text}"
+    files:
+      root: "./rootdir"
   scheduler:
     tasks-dir: "./tasks"
     check-interval-ms: 60000

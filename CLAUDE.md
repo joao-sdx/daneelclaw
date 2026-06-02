@@ -46,7 +46,9 @@ DaneelClaw is a personal AI assistant: a chat interface backed by a local LLM (v
 
 `DaneelToolInterface` is the contract for all tools: name, description, `List<ToolProperty>`, and an `execute(Map<String,Object>)` method. `ToolRegistrar` is a `@Component` that collects all `DaneelToolInterface` beans at startup, generates a JSON schema from their `ToolProperty` metadata, and produces a `ToolCallback[]` array that `ChatConfig` passes to the main `ChatClient`.
 
-Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskListTool`, `TaskGetTool`, `PromptListTool`, `PromptCreateTool`, `TimeProviderTool`, `LocalTimezoneTool`, `SpeakTool` (macOS `say` command), `SpawnPerItemTool` (fan-out: spawns one background sub-run per item in a list).
+Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskListTool`, `TaskGetTool`, `PromptListTool`, `PromptCreateTool`, `TimeProviderTool`, `LocalTimezoneTool`, `SpeakTool` (macOS `say` command), `SpawnPerItemTool` (fan-out: spawns one background sub-run per item in a list), `FileReadTool`, `FileWriteTool`, `FileDeleteTool`, `FileMoveTool`, `FilePropertiesTool`, `DirectoryCreateTool`, `DirectoryListTool` (sandboxed filesystem access — all paths relative to the configured root, traversal outside root is rejected).
+
+`SandboxFileSystem` is a shared `@Component` helper (not a tool) that holds the absolute root path and enforces containment: `resolve(userPath)` normalizes the candidate and throws `SandboxAccessException` if it escapes the root. All filesystem tools inject it.
 
 **Adding a new tool:** implement `DaneelToolInterface`, annotate with `@Component`, define your `ToolProperty` list. `ToolRegistrar` picks it up automatically.
 
@@ -62,6 +64,7 @@ Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskLi
 - `daneel.telegram.bot-token` — set via `TELEGRAM_BOT_TOKEN` env var; required when enabled
 - `daneel.telegram.allowed-chat-ids` — set via `TELEGRAM_ALLOWED_CHAT_IDS=<id1>,<id2>` env var; if empty, all chats allowed
 - `daneel.telegram.poll-delay-ms` — polling interval in ms (default 1000)
+- `daneel.tools.files.root` — sandbox root directory for filesystem tools (`./rootdir` by default; auto-created on startup)
 
 `src/main/resources/system-prompt.md` — the LLM system prompt (currently French-language, concise/friendly persona).
 

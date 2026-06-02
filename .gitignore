@@ -49,3 +49,8 @@ spring-shell.log
 
 # Superpowers brainstorm sessions
 .superpowers/
+
+.env
+
+# Sandbox filesystem root (created at runtime by SandboxFileSystem)
+/rootdir/
