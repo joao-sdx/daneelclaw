@@ -22,6 +22,10 @@ daneel:
       root: "./rootdir"
     spawn:
       block-timeout-ms: 30000
+    dataforseo:
+      api:
+        user: ${DATAFORSEO_USER}
+        key: ${DATAFORSEO_KEY}
   scheduler:
     tasks-dir: "./tasks"
     check-interval-ms: 60000
