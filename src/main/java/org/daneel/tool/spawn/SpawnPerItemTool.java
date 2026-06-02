@@ -36,7 +36,8 @@ public class SpawnPerItemTool implements DaneelToolInterface {
 
   @Override
   public String description() {
-    return "Spawns an independent sub-run for each item in a list and blocks until all finish (or a timeout). "
+    return "Use this to LOOP or repeat an action over each item in a list (batch processing). "
+        + "Spawns an independent sub-run for each item and blocks until all finish (or a timeout). "
         + "The prompt must contain {item}, which will be replaced with each item's value. "
         + "Each sub-run has its own isolated session with full tool access. "
         + "Returns a summary like 'Processed N items: H handled, F failed.' when done within the timeout. "
