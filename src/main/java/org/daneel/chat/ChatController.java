@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ChatController {
 
-    private final ChatService chatService;
+  private final ChatService chatService;
 
-    @PostMapping("/chat")
-    public ChatResponse chat(@Valid @RequestBody ChatRequest request) {
-        log.info("chat_request sessionId={}", request.sessionId());
-        return chatService.chat(request.sessionId(), request.message());
-    }
+  @PostMapping("/chat")
+  public ChatResponse chat(@Valid @RequestBody ChatRequest request) {
+    log.info("chat_request sessionId={}", request.sessionId());
+    return chatService.chat(request.sessionId(), request.message());
+  }
 }
