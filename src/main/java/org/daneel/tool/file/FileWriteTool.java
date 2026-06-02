@@ -1,4 +1,4 @@
-package org.daneel.tool;
+package org.daneel.tool.file;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -7,6 +7,8 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.daneel.tool.DaneelToolInterface;
+import org.daneel.tool.ToolProperty;
 import org.springframework.stereotype.Component;
 
 @Slf4j

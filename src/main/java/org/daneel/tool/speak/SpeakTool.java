@@ -1,9 +1,11 @@
-package org.daneel.tool;
+package org.daneel.tool.speak;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import lombok.SneakyThrows;
+import org.daneel.tool.DaneelToolInterface;
+import org.daneel.tool.ToolProperty;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

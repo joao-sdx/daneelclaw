@@ -1,4 +1,4 @@
-package org.daneel.tool;
+package org.daneel.tool.task;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.daneel.task.PlannedTask;
 import org.daneel.task.PromptCatalog;
 import org.daneel.task.TaskStore;
+import org.daneel.tool.DaneelToolInterface;
+import org.daneel.tool.ToolProperty;
 import org.springframework.stereotype.Component;
 
 @Slf4j

@@ -1,10 +1,14 @@
 # Task Management Tools Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:
+> executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Expose CRUD task operations and prompt discovery as bot-facing LLM tools, so DaneelClaw can manage its own scheduled tasks during a conversation.
+**Goal:** Expose CRUD task operations and prompt discovery as bot-facing LLM tools, so DaneelClaw can manage its own
+scheduled tasks during a conversation.
 
-**Architecture:** Six `DaneelToolInterface` implementations auto-wired via `ToolRegistrar`. Foundation pieces (`PromptDocument`, `PromptCatalog`) land first; task tools depend on `TaskStore` and `PromptCatalog`. `PromptResolver` is patched to strip YAML frontmatter before sending prompt body to the LLM.
+**Architecture:** Six `DaneelToolInterface` implementations auto-wired via `ToolRegistrar`. Foundation pieces (
+`PromptDocument`, `PromptCatalog`) land first; task tools depend on `TaskStore` and `PromptCatalog`. `PromptResolver` is
+patched to strip YAML frontmatter before sending prompt body to the LLM.
 
 **Tech Stack:** Spring Boot 3.5, Lombok, Jackson YAML (already in pom.xml), JUnit 5, Mockito, AssertJ.
 
@@ -13,14 +17,17 @@
 ## File Map
 
 **New files — `src/main/java/org/daneel/task/`**
+
 - `PromptDocument.java` — record + static `parse()` for YAML frontmatter extraction
 - `PromptSummary.java` — record `(String promptFile, String summary)`
 - `PromptCatalog.java` — `@Component` scanning `*.md` files for frontmatter summaries
 
 **Modified — `src/main/java/org/daneel/task/`**
+
 - `PromptResolver.java` — route content through `PromptDocument.parse().body()` before substitution
 
 **New files — `src/main/java/org/daneel/tool/`**
+
 - `TaskListTool.java` — `task_list`: JSON array of all tasks
 - `TaskGetTool.java` — `task_get`: task by id
 - `TaskCreateTool.java` — `task_create`: validate prompt exists, generate UUID, save
@@ -29,9 +36,11 @@
 - `PromptListTool.java` — `prompt_list`: filenames + summaries from `PromptCatalog`
 
 **Modified — `tasks/`**
+
 - `hello.md` — prepend YAML frontmatter with `summary:`
 
 **New test files**
+
 - `src/test/java/org/daneel/task/PromptDocumentTest.java`
 - `src/test/java/org/daneel/task/PromptCatalogTest.java`
 - (extend) `src/test/java/org/daneel/task/PromptResolverTest.java`
@@ -47,6 +56,7 @@
 ### Task 1: PromptDocument — frontmatter parser
 
 **Files:**
+
 - Create: `src/main/java/org/daneel/task/PromptDocument.java`
 - Create: `src/test/java/org/daneel/task/PromptDocumentTest.java`
 
@@ -109,6 +119,7 @@ class PromptDocumentTest {
 cd /Users/joao.violante/IdeaProjects/daneelclaw
 ./mvnw test -Dtest=PromptDocumentTest -q 2>&1 | tail -10
 ```
+
 Expected: compilation error — `PromptDocument` not found.
 
 - [ ] **Step 3: Implement PromptDocument**
@@ -156,6 +167,7 @@ public record PromptDocument(String summary, String body) {
 ```bash
 ./mvnw test -Dtest=PromptDocumentTest -q 2>&1 | tail -5
 ```
+
 Expected: `BUILD SUCCESS`, 5 tests passed.
 
 - [ ] **Step 5: Commit**
@@ -171,6 +183,7 @@ git commit -m "feat: add PromptDocument for YAML frontmatter parsing"
 ### Task 2: PromptSummary + PromptCatalog
 
 **Files:**
+
 - Create: `src/main/java/org/daneel/task/PromptSummary.java`
 - Create: `src/main/java/org/daneel/task/PromptCatalog.java`
 - Create: `src/test/java/org/daneel/task/PromptCatalogTest.java`
@@ -250,6 +263,7 @@ class PromptCatalogTest {
 ```bash
 ./mvnw test -Dtest=PromptCatalogTest -q 2>&1 | tail -10
 ```
+
 Expected: compilation error — `PromptCatalog` / `PromptSummary` not found.
 
 - [ ] **Step 3: Implement PromptSummary and PromptCatalog**
@@ -316,6 +330,7 @@ public class PromptCatalog {
 ```bash
 ./mvnw test -Dtest=PromptCatalogTest -q 2>&1 | tail -5
 ```
+
 Expected: `BUILD SUCCESS`, 6 tests passed.
 
 - [ ] **Step 5: Commit**
@@ -332,6 +347,7 @@ git commit -m "feat: add PromptSummary and PromptCatalog for prompt discovery"
 ### Task 3: Strip frontmatter in PromptResolver
 
 **Files:**
+
 - Modify: `src/main/java/org/daneel/task/PromptResolver.java`
 - Modify: `src/test/java/org/daneel/task/PromptResolverTest.java`
 
@@ -359,6 +375,7 @@ void resolve_stripsFrontmatterBeforeSubstitution() throws Exception {
 ```bash
 ./mvnw test -Dtest=PromptResolverTest -q 2>&1 | tail -10
 ```
+
 Expected: `resolve_stripsFrontmatterBeforeSubstitution` FAIL (frontmatter is currently passed through verbatim).
 
 - [ ] **Step 3: Modify PromptResolver.resolve() to strip frontmatter**
@@ -402,6 +419,7 @@ public String resolve(PlannedTask task, Instant triggerTime, Instant currentTime
 ```bash
 ./mvnw test -Dtest=PromptResolverTest -q 2>&1 | tail -5
 ```
+
 Expected: `BUILD SUCCESS`, 6 tests passed (5 original + 1 new).
 
 - [ ] **Step 5: Commit**
@@ -417,6 +435,7 @@ git commit -m "feat: strip YAML frontmatter in PromptResolver before LLM deliver
 ### Task 4: Add frontmatter to hello.md
 
 **Files:**
+
 - Modify: `tasks/hello.md`
 
 - [ ] **Step 1: Prepend frontmatter**
@@ -435,7 +454,9 @@ Use the speak tool to say the word 'bonjour' out loud.
 ```bash
 ./mvnw test -q 2>&1 | tail -5
 ```
-Expected: `BUILD SUCCESS` — all existing tests still pass (PromptResolverTest now strips frontmatter, so the body reaches the resolver cleanly).
+
+Expected: `BUILD SUCCESS` — all existing tests still pass (PromptResolverTest now strips frontmatter, so the body
+reaches the resolver cleanly).
 
 - [ ] **Step 3: Commit**
 
@@ -449,6 +470,7 @@ git commit -m "feat: add frontmatter summary to hello.md prompt"
 ### Task 5: TaskListTool
 
 **Files:**
+
 - Create: `src/main/java/org/daneel/tool/TaskListTool.java`
 - Create: `src/test/java/org/daneel/tool/TaskListToolTest.java`
 
@@ -463,6 +485,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.daneel.task.PlannedTask;
 import org.daneel.task.TaskStore;
+import org.daneel.tool.task.TaskListTool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -509,8 +532,7 @@ class TaskListToolTest {
 
     @Test
     void execute_returnsJsonArray() {
-        var task = new PlannedTask("id1", "My Task", "hello.md",
-                Instant.parse("2026-06-02T10:00:00Z"), null, true);
+        var task = new PlannedTask("id1", "My Task", "hello.md", Instant.parse("2026-06-02T10:00:00Z"), null, true);
         when(taskStore.findAll()).thenReturn(List.of(task));
         var result = tool.execute(Map.of());
         assertThat(result).contains("id1").contains("My Task").contains("hello.md");
@@ -529,6 +551,7 @@ class TaskListToolTest {
 ```bash
 ./mvnw test -Dtest=TaskListToolTest -q 2>&1 | tail -10
 ```
+
 Expected: compilation error — `TaskListTool` not found.
 
 - [ ] **Step 3: Implement TaskListTool**
@@ -583,6 +606,7 @@ public class TaskListTool implements DaneelToolInterface {
 ```bash
 ./mvnw test -Dtest=TaskListToolTest -q 2>&1 | tail -5
 ```
+
 Expected: `BUILD SUCCESS`, 5 tests passed.
 
 - [ ] **Step 5: Commit**
@@ -598,6 +622,7 @@ git commit -m "feat: add TaskListTool to list all scheduled tasks"
 ### Task 6: TaskGetTool
 
 **Files:**
+
 - Create: `src/main/java/org/daneel/tool/TaskGetTool.java`
 - Create: `src/test/java/org/daneel/tool/TaskGetToolTest.java`
 
@@ -612,6 +637,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.daneel.task.PlannedTask;
 import org.daneel.task.TaskStore;
+import org.daneel.tool.task.TaskGetTool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -644,8 +670,7 @@ class TaskGetToolTest {
 
     @Test
     void execute_returnsTaskJson() {
-        var task = new PlannedTask("abc", "Test", "hello.md",
-                Instant.parse("2026-06-02T10:00:00Z"), null, true);
+        var task = new PlannedTask("abc", "Test", "hello.md", Instant.parse("2026-06-02T10:00:00Z"), null, true);
         when(taskStore.findById("abc")).thenReturn(Optional.of(task));
         var result = tool.execute(Map.of("id", "abc"));
         assertThat(result).contains("abc").contains("Test");
@@ -676,6 +701,7 @@ class TaskGetToolTest {
 ```bash
 ./mvnw test -Dtest=TaskGetToolTest -q 2>&1 | tail -10
 ```
+
 Expected: compilation error.
 
 - [ ] **Step 3: Implement TaskGetTool**
@@ -742,6 +768,7 @@ public class TaskGetTool implements DaneelToolInterface {
 ```bash
 ./mvnw test -Dtest=TaskGetToolTest -q 2>&1 | tail -5
 ```
+
 Expected: `BUILD SUCCESS`, 4 tests passed.
 
 - [ ] **Step 5: Commit**
@@ -757,6 +784,7 @@ git commit -m "feat: add TaskGetTool to retrieve a task by id"
 ### Task 7: TaskCreateTool
 
 **Files:**
+
 - Create: `src/main/java/org/daneel/tool/TaskCreateTool.java`
 - Create: `src/test/java/org/daneel/tool/TaskCreateToolTest.java`
 
@@ -772,6 +800,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.daneel.task.PlannedTask;
 import org.daneel.task.PromptCatalog;
 import org.daneel.task.TaskStore;
+import org.daneel.tool.task.TaskCreateTool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -809,11 +838,8 @@ class TaskCreateToolTest {
     @Test
     void execute_createsAndReturnsTask() {
         when(promptCatalog.exists("hello.md")).thenReturn(true);
-        var params = Map.<String, Object>of(
-                "name", "My Task",
-                "promptFile", "hello.md",
-                "nextRunAt", "2026-06-02T10:00:00Z"
-        );
+        var params = Map.<String, Object>of("name", "My Task", "promptFile", "hello.md", "nextRunAt",
+                "2026-06-02T10:00:00Z");
         var result = tool.execute(params);
         var captor = ArgumentCaptor.forClass(PlannedTask.class);
         verify(taskStore).save(captor.capture());
@@ -834,22 +860,15 @@ class TaskCreateToolTest {
     @Test
     void execute_unknownPromptFile_returnsError() {
         when(promptCatalog.exists("missing.md")).thenReturn(false);
-        var params = Map.<String, Object>of(
-                "name", "Task",
-                "promptFile", "missing.md",
-                "nextRunAt", "2026-06-02T10:00:00Z"
-        );
+        var params = Map.<String, Object>of("name", "Task", "promptFile", "missing.md", "nextRunAt",
+                "2026-06-02T10:00:00Z");
         assertThat(tool.execute(params)).startsWith("Error:");
     }
 
     @Test
     void execute_badNextRunAt_returnsError() {
         when(promptCatalog.exists("hello.md")).thenReturn(true);
-        var params = Map.<String, Object>of(
-                "name", "Task",
-                "promptFile", "hello.md",
-                "nextRunAt", "not-a-date"
-        );
+        var params = Map.<String, Object>of("name", "Task", "promptFile", "hello.md", "nextRunAt", "not-a-date");
         assertThat(tool.execute(params)).startsWith("Error:");
     }
 
@@ -870,6 +889,7 @@ class TaskCreateToolTest {
 ```bash
 ./mvnw test -Dtest=TaskCreateToolTest -q 2>&1 | tail -10
 ```
+
 Expected: compilation error.
 
 - [ ] **Step 3: Implement TaskCreateTool**
@@ -1006,6 +1026,7 @@ public class TaskCreateTool implements DaneelToolInterface {
 ```bash
 ./mvnw test -Dtest=TaskCreateToolTest -q 2>&1 | tail -5
 ```
+
 Expected: `BUILD SUCCESS`, 5 tests passed.
 
 - [ ] **Step 5: Commit**
@@ -1021,6 +1042,7 @@ git commit -m "feat: add TaskCreateTool to schedule a task via the LLM"
 ### Task 8: TaskUpdateTool
 
 **Files:**
+
 - Create: `src/main/java/org/daneel/tool/TaskUpdateTool.java`
 - Create: `src/test/java/org/daneel/tool/TaskUpdateToolTest.java`
 
@@ -1036,6 +1058,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.daneel.task.PlannedTask;
 import org.daneel.task.PromptCatalog;
 import org.daneel.task.TaskStore;
+import org.daneel.tool.task.TaskUpdateTool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -1070,21 +1093,15 @@ class TaskUpdateToolTest {
     }
 
     private PlannedTask existingTask() {
-        return new PlannedTask("id1", "Old Name", "hello.md",
-                Instant.parse("2026-06-01T10:00:00Z"), null, true);
+        return new PlannedTask("id1", "Old Name", "hello.md", Instant.parse("2026-06-01T10:00:00Z"), null, true);
     }
 
     @Test
     void execute_updatesTask_returnsJson() {
         when(taskStore.findById("id1")).thenReturn(Optional.of(existingTask()));
         when(promptCatalog.exists("hello.md")).thenReturn(true);
-        var params = Map.<String, Object>of(
-                "id", "id1",
-                "name", "New Name",
-                "promptFile", "hello.md",
-                "nextRunAt", "2026-06-03T10:00:00Z",
-                "enabled", true
-        );
+        var params = Map.<String, Object>of("id", "id1", "name", "New Name", "promptFile", "hello.md", "nextRunAt",
+                "2026-06-03T10:00:00Z", "enabled", true);
         var result = tool.execute(params);
         assertThat(result).contains("New Name").contains("id1");
     }
@@ -1092,13 +1109,8 @@ class TaskUpdateToolTest {
     @Test
     void execute_taskNotFound_returnsError() {
         when(taskStore.findById("missing")).thenReturn(Optional.empty());
-        var params = Map.<String, Object>of(
-                "id", "missing",
-                "name", "Name",
-                "promptFile", "hello.md",
-                "nextRunAt", "2026-06-03T10:00:00Z",
-                "enabled", true
-        );
+        var params = Map.<String, Object>of("id", "missing", "name", "Name", "promptFile", "hello.md", "nextRunAt",
+                "2026-06-03T10:00:00Z", "enabled", true);
         assertThat(tool.execute(params)).startsWith("Error:");
     }
 
@@ -1113,13 +1125,8 @@ class TaskUpdateToolTest {
     void execute_unknownPromptFile_returnsError() {
         when(taskStore.findById("id1")).thenReturn(Optional.of(existingTask()));
         when(promptCatalog.exists("bad.md")).thenReturn(false);
-        var params = Map.<String, Object>of(
-                "id", "id1",
-                "name", "Name",
-                "promptFile", "bad.md",
-                "nextRunAt", "2026-06-03T10:00:00Z",
-                "enabled", true
-        );
+        var params = Map.<String, Object>of("id", "id1", "name", "Name", "promptFile", "bad.md", "nextRunAt",
+                "2026-06-03T10:00:00Z", "enabled", true);
         assertThat(tool.execute(params)).startsWith("Error:");
     }
 
@@ -1127,13 +1134,8 @@ class TaskUpdateToolTest {
     void execute_badNextRunAt_returnsError() {
         when(taskStore.findById("id1")).thenReturn(Optional.of(existingTask()));
         when(promptCatalog.exists("hello.md")).thenReturn(true);
-        var params = Map.<String, Object>of(
-                "id", "id1",
-                "name", "Name",
-                "promptFile", "hello.md",
-                "nextRunAt", "invalid",
-                "enabled", true
-        );
+        var params = Map.<String, Object>of("id", "id1", "name", "Name", "promptFile", "hello.md", "nextRunAt",
+                "invalid", "enabled", true);
         assertThat(tool.execute(params)).startsWith("Error:");
     }
 }
@@ -1144,6 +1146,7 @@ class TaskUpdateToolTest {
 ```bash
 ./mvnw test -Dtest=TaskUpdateToolTest -q 2>&1 | tail -10
 ```
+
 Expected: compilation error.
 
 - [ ] **Step 3: Implement TaskUpdateTool**
@@ -1266,6 +1269,7 @@ public class TaskUpdateTool implements DaneelToolInterface {
 ```bash
 ./mvnw test -Dtest=TaskUpdateToolTest -q 2>&1 | tail -5
 ```
+
 Expected: `BUILD SUCCESS`, 5 tests passed.
 
 - [ ] **Step 5: Commit**
@@ -1281,6 +1285,7 @@ git commit -m "feat: add TaskUpdateTool to update a scheduled task"
 ### Task 9: TaskDeleteTool
 
 **Files:**
+
 - Create: `src/main/java/org/daneel/tool/TaskDeleteTool.java`
 - Create: `src/test/java/org/daneel/tool/TaskDeleteToolTest.java`
 
@@ -1292,6 +1297,7 @@ package org.daneel.tool;
 
 import org.daneel.task.PlannedTask;
 import org.daneel.task.TaskStore;
+import org.daneel.tool.task.TaskDeleteTool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -1322,8 +1328,7 @@ class TaskDeleteToolTest {
 
     @Test
     void execute_deletesTask_returnsDone() {
-        var task = new PlannedTask("id1", "Task", "hello.md",
-                Instant.parse("2026-06-02T10:00:00Z"), null, true);
+        var task = new PlannedTask("id1", "Task", "hello.md", Instant.parse("2026-06-02T10:00:00Z"), null, true);
         when(taskStore.findById("id1")).thenReturn(Optional.of(task));
         var result = tool.execute(Map.of("id", "id1"));
         verify(taskStore).delete("id1");
@@ -1355,6 +1360,7 @@ class TaskDeleteToolTest {
 ```bash
 ./mvnw test -Dtest=TaskDeleteToolTest -q 2>&1 | tail -10
 ```
+
 Expected: compilation error.
 
 - [ ] **Step 3: Implement TaskDeleteTool**
@@ -1415,6 +1421,7 @@ public class TaskDeleteTool implements DaneelToolInterface {
 ```bash
 ./mvnw test -Dtest=TaskDeleteToolTest -q 2>&1 | tail -5
 ```
+
 Expected: `BUILD SUCCESS`, 4 tests passed.
 
 - [ ] **Step 5: Commit**
@@ -1430,6 +1437,7 @@ git commit -m "feat: add TaskDeleteTool to remove a scheduled task"
 ### Task 10: PromptListTool
 
 **Files:**
+
 - Create: `src/main/java/org/daneel/tool/PromptListTool.java`
 - Create: `src/test/java/org/daneel/tool/PromptListToolTest.java`
 
@@ -1442,6 +1450,7 @@ package org.daneel.tool;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.daneel.task.PromptCatalog;
 import org.daneel.task.PromptSummary;
+import org.daneel.tool.task.PromptListTool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -1479,8 +1488,7 @@ class PromptListToolTest {
 
     @Test
     void execute_returnsJsonArrayWithSummaries() {
-        when(promptCatalog.list()).thenReturn(List.of(
-                new PromptSummary("hello.md", "Says bonjour via speak tool.")));
+        when(promptCatalog.list()).thenReturn(List.of(new PromptSummary("hello.md", "Says bonjour via speak tool.")));
         var result = tool.execute(Map.of());
         assertThat(result).contains("hello.md").contains("Says bonjour via speak tool.");
     }
@@ -1498,6 +1506,7 @@ class PromptListToolTest {
 ```bash
 ./mvnw test -Dtest=PromptListToolTest -q 2>&1 | tail -10
 ```
+
 Expected: compilation error.
 
 - [ ] **Step 3: Implement PromptListTool**
@@ -1553,6 +1562,7 @@ public class PromptListTool implements DaneelToolInterface {
 ```bash
 ./mvnw test -Dtest=PromptListToolTest -q 2>&1 | tail -5
 ```
+
 Expected: `BUILD SUCCESS`, 4 tests passed.
 
 - [ ] **Step 5: Commit**
@@ -1572,7 +1582,9 @@ git commit -m "feat: add PromptListTool to discover available prompts and summar
 ```bash
 ./mvnw test 2>&1 | tail -20
 ```
-Expected: `BUILD SUCCESS` — all tests pass. Count should be significantly higher than before this feature (was 50; now should include 6 new test classes + extended PromptResolverTest).
+
+Expected: `BUILD SUCCESS` — all tests pass. Count should be significantly higher than before this feature (was 50; now
+should include 6 new test classes + extended PromptResolverTest).
 
 - [ ] **Step 2: Push to remote**
 
@@ -1586,6 +1598,7 @@ git push origin main
 
 1. Start the app: `./start.sh`
 2. In the chat UI: "What prompts are available?" → bot calls `prompt_list` → reports `hello.md` with its summary.
-3. "Schedule the hello prompt to run in 2 minutes." → bot calls `task_create` → confirm entry appears in `tasks/tasks.yml` and at `GET /tasks`.
+3. "Schedule the hello prompt to run in 2 minutes." → bot calls `task_create` → confirm entry appears in
+   `tasks/tasks.yml` and at `GET /tasks`.
 4. "List my tasks" → bot calls `task_list` → returns JSON of all tasks.
 5. "Delete task `<id>`" → bot calls `task_delete` → task gone from `GET /tasks`.

@@ -1,10 +1,15 @@
 # SpeakTool Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:
+> executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a `SpeakTool` that runs a configurable system command to speak text aloud, defaulting to macOS `say -v Thomas {text}`.
+**Goal:** Add a `SpeakTool` that runs a configurable system command to speak text aloud, defaulting to macOS
+`say -v Thomas {text}`.
 
-**Architecture:** `SpeakTool` is a `@Component` implementing `DaneelToolInterface`. It receives a command template via a `@Value`-annotated constructor parameter (testable without Spring context). `execute` splits the template by spaces, replaces the `{text}` token with the actual text, and runs the result via `ProcessBuilder`. `application.yml` documents the property with the default value for discoverability.
+**Architecture:** `SpeakTool` is a `@Component` implementing `DaneelToolInterface`. It receives a command template via a
+`@Value`-annotated constructor parameter (testable without Spring context). `execute` splits the template by spaces,
+replaces the `{text}` token with the actual text, and runs the result via `ProcessBuilder`. `application.yml` documents
+the property with the default value for discoverability.
 
 **Tech Stack:** Java 24, Spring Boot 3.5.14, Lombok `@SneakyThrows`, JUnit 5 + AssertJ.
 
@@ -12,17 +17,18 @@
 
 ## File Map
 
-| Action | Path | Responsibility |
-|--------|------|----------------|
-| Create | `src/main/java/org/daneel/tool/SpeakTool.java` | New tool: runs a system TTS command |
+| Action | Path                                               | Responsibility                            |
+|--------|----------------------------------------------------|-------------------------------------------|
+| Create | `src/main/java/org/daneel/tool/SpeakTool.java`     | New tool: runs a system TTS command       |
 | Create | `src/test/java/org/daneel/tool/SpeakToolTest.java` | Unit tests using `echo {text}` as command |
-| Modify | `src/main/resources/application.yml` | Add `daneel.tools.speak.command` property |
+| Modify | `src/main/resources/application.yml`               | Add `daneel.tools.speak.command` property |
 
 ---
 
 ## Task 1: `SpeakTool` (TDD)
 
 **Files:**
+
 - Create: `src/test/java/org/daneel/tool/SpeakToolTest.java`
 - Create: `src/main/java/org/daneel/tool/SpeakTool.java`
 
@@ -41,13 +47,13 @@
   ```java
   package org.daneel.tool;
 
-  import org.junit.jupiter.api.Test;
+import org.daneel.tool.speak.SpeakTool; import org.junit.jupiter.api.Test;
 
-  import java.util.Map;
+import java.util.Map;
 
-  import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-  class SpeakToolTest {
+class SpeakToolTest {
 
       // Uses "echo {text}" as command — cross-platform, exits 0, doesn't need a voice
       private final SpeakTool tool = new SpeakTool("echo {text}");
@@ -79,7 +85,9 @@
           assertThat(props.getFirst().name()).isEqualTo("text");
           assertThat(props.getFirst().required()).isTrue();
       }
-  }
+
+}
+
   ```
 
 - [ ] **Step 3: Run tests to confirm they fail**
@@ -88,7 +96,7 @@
   ./mvnw test -Dtest=SpeakToolTest -q 2>&1 | tail -5
   ```
 
-  Expected: compilation error — `SpeakTool` not found.
+Expected: compilation error — `SpeakTool` not found.
 
 - [ ] **Step 4: Create `SpeakTool.java`**
 
@@ -146,9 +154,13 @@
   ```
 
   **Key design notes:**
-  - `@Value` is on the constructor parameter (not a field), so tests can instantiate `new SpeakTool("echo {text}")` directly without a Spring context.
-  - `commandTemplate.split(" ")` splits the template into tokens; `.replace("{text}", text)` replaces the placeholder token. Because each token becomes a separate `ProcessBuilder` argument, text with spaces is passed safely as one argument — no shell injection.
-  - `@SneakyThrows` handles `IOException` and `InterruptedException` from `ProcessBuilder`, consistent with `ToolRegistrar`'s existing pattern.
+    - `@Value` is on the constructor parameter (not a field), so tests can instantiate `new SpeakTool("echo {text}")`
+      directly without a Spring context.
+    - `commandTemplate.split(" ")` splits the template into tokens; `.replace("{text}", text)` replaces the placeholder
+      token. Because each token becomes a separate `ProcessBuilder` argument, text with spaces is passed safely as one
+      argument — no shell injection.
+    - `@SneakyThrows` handles `IOException` and `InterruptedException` from `ProcessBuilder`, consistent with
+      `ToolRegistrar`'s existing pattern.
 
 - [ ] **Step 5: Run tests to confirm they pass**
 
@@ -179,9 +191,11 @@
 ## Task 2: Document property in `application.yml`
 
 **Files:**
+
 - Modify: `src/main/resources/application.yml`
 
-The `@Value` default already covers the case where the property is absent. This task adds it to `application.yml` explicitly so it's discoverable and easy to override.
+The `@Value` default already covers the case where the property is absent. This task adds it to `application.yml`
+explicitly so it's discoverable and easy to override.
 
 Current `application.yml`:
 
@@ -237,7 +251,8 @@ server:
   wait $APP_PID 2>/dev/null
   ```
 
-  Expected: output is `1` (app started cleanly). If port 8080 is busy, run `lsof -ti:8080 | xargs kill -9` first, or use `./start.sh`.
+  Expected: output is `1` (app started cleanly). If port 8080 is busy, run `lsof -ti:8080 | xargs kill -9` first, or use
+  `./start.sh`.
 
 - [ ] **Step 3: Commit**
 
@@ -251,6 +266,7 @@ server:
 ## Self-Review
 
 **Spec coverage:**
+
 - `SpeakTool` with name `speak`, description, one required `text` property (Task 1) ✓
 - `@Value("${daneel.tools.speak.command:say -v Thomas {text}}")` (Task 1) ✓
 - Constructor injection for testability (Task 1) ✓
@@ -263,6 +279,8 @@ server:
 **Placeholders:** None.
 
 **Type consistency:**
+
 - `SpeakTool("echo {text}")` test constructor matches `public SpeakTool(@Value(...) String commandTemplate)`
-- `tool.execute(Map.of("text", "hello"))` matches `execute(Map<String, Object> params)` — `Map.of` returns `Map<String, Object>` ✓
+- `tool.execute(Map.of("text", "hello"))` matches `execute(Map<String, Object> params)` — `Map.of` returns
+  `Map<String, Object>` ✓
 - `props.getFirst()` requires Java 21+ (project uses Java 24) ✓

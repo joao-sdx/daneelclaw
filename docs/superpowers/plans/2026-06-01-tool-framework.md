@@ -1,28 +1,35 @@
 # Tool Framework Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:
+> executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a `DaneelToolInterface` abstraction, a `ToolRegistrar` adapter to Spring AI, and two concrete tools (`TimeProviderTool`, `LocalTimezoneTool`), wired into `ChatConfig` so every chat request automatically has the tools available.
+**Goal:** Add a `DaneelToolInterface` abstraction, a `ToolRegistrar` adapter to Spring AI, and two concrete tools (
+`TimeProviderTool`, `LocalTimezoneTool`), wired into `ChatConfig` so every chat request automatically has the tools
+available.
 
-**Architecture:** Each tool is a `@Component` implementing `DaneelToolInterface` (name, description, properties list, execute). `ToolRegistrar` collects all such beans, converts them to Spring AI `ToolCallback` instances by building a JSON schema from `properties()` and wrapping `execute` in a `call(String json)` that parses the JSON then delegates. `ChatConfig` injects `ToolRegistrar` and calls `builder.defaultToolCallbacks(...)`.
+**Architecture:** Each tool is a `@Component` implementing `DaneelToolInterface` (name, description, properties list,
+execute). `ToolRegistrar` collects all such beans, converts them to Spring AI `ToolCallback` instances by building a
+JSON schema from `properties()` and wrapping `execute` in a `call(String json)` that parses the JSON then delegates.
+`ChatConfig` injects `ToolRegistrar` and calls `builder.defaultToolCallbacks(...)`.
 
-**Tech Stack:** Spring Boot 3.5.14, Spring AI 1.0.0 (`ToolCallback`, `ToolDefinition`), Lombok, Jackson `ObjectMapper`, JUnit 5 + AssertJ.
+**Tech Stack:** Spring Boot 3.5.14, Spring AI 1.0.0 (`ToolCallback`, `ToolDefinition`), Lombok, Jackson `ObjectMapper`,
+JUnit 5 + AssertJ.
 
 ---
 
 ## File Map
 
-| Action | Path | Responsibility |
-|--------|------|----------------|
-| Create | `src/main/java/org/daneel/tool/ToolProperty.java` | Record: parameter descriptor |
-| Create | `src/main/java/org/daneel/tool/DaneelToolInterface.java` | Interface every tool must implement |
-| Create | `src/main/java/org/daneel/tool/ToolRegistrar.java` | Converts `DaneelToolInterface` list → `ToolCallback[]` |
-| Create | `src/main/java/org/daneel/tool/TimeProviderTool.java` | Tool: datetime for a given timezone |
-| Create | `src/main/java/org/daneel/tool/LocalTimezoneTool.java` | Tool: local system timezone |
-| Modify | `src/main/java/org/daneel/chat/ChatConfig.java` | Wire `ToolRegistrar` into `ChatClient` builder |
-| Create | `src/test/java/org/daneel/tool/ToolRegistrarTest.java` | Unit tests for adapter logic |
-| Create | `src/test/java/org/daneel/tool/TimeProviderToolTest.java` | Unit tests for TimeProviderTool |
-| Create | `src/test/java/org/daneel/tool/LocalTimezoneToolTest.java` | Unit tests for LocalTimezoneTool |
+| Action | Path                                                       | Responsibility                                         |
+|--------|------------------------------------------------------------|--------------------------------------------------------|
+| Create | `src/main/java/org/daneel/tool/ToolProperty.java`          | Record: parameter descriptor                           |
+| Create | `src/main/java/org/daneel/tool/DaneelToolInterface.java`   | Interface every tool must implement                    |
+| Create | `src/main/java/org/daneel/tool/ToolRegistrar.java`         | Converts `DaneelToolInterface` list → `ToolCallback[]` |
+| Create | `src/main/java/org/daneel/tool/TimeProviderTool.java`      | Tool: datetime for a given timezone                    |
+| Create | `src/main/java/org/daneel/tool/LocalTimezoneTool.java`     | Tool: local system timezone                            |
+| Modify | `src/main/java/org/daneel/chat/ChatConfig.java`            | Wire `ToolRegistrar` into `ChatClient` builder         |
+| Create | `src/test/java/org/daneel/tool/ToolRegistrarTest.java`     | Unit tests for adapter logic                           |
+| Create | `src/test/java/org/daneel/tool/TimeProviderToolTest.java`  | Unit tests for TimeProviderTool                        |
+| Create | `src/test/java/org/daneel/tool/LocalTimezoneToolTest.java` | Unit tests for LocalTimezoneTool                       |
 
 ---
 
@@ -31,6 +38,7 @@
 These are pure Java types; no tests needed (no logic to test).
 
 **Files:**
+
 - Create: `src/main/java/org/daneel/tool/ToolProperty.java`
 - Create: `src/main/java/org/daneel/tool/DaneelToolInterface.java`
 
@@ -79,6 +87,7 @@ These are pure Java types; no tests needed (no logic to test).
 ## Task 2: `ToolRegistrar` — adapter from DaneelToolInterface to Spring AI ToolCallback (TDD)
 
 **Files:**
+
 - Create: `src/test/java/org/daneel/tool/ToolRegistrarTest.java`
 - Create: `src/main/java/org/daneel/tool/ToolRegistrar.java`
 
@@ -262,6 +271,7 @@ These are pure Java types; no tests needed (no logic to test).
 ## Task 3: `TimeProviderTool` (TDD)
 
 **Files:**
+
 - Create: `src/test/java/org/daneel/tool/TimeProviderToolTest.java`
 - Create: `src/main/java/org/daneel/tool/TimeProviderTool.java`
 
@@ -272,17 +282,16 @@ These are pure Java types; no tests needed (no logic to test).
   ```java
   package org.daneel.tool;
 
-  import org.junit.jupiter.api.Test;
+import org.daneel.tool.time.TimeProviderTool; import org.junit.jupiter.api.Test;
 
-  import java.time.ZoneId;
-  import java.time.ZonedDateTime;
-  import java.time.format.DateTimeFormatter;
-  import java.util.Map;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
-  import static org.assertj.core.api.Assertions.assertThat;
-  import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-  class TimeProviderToolTest {
+class TimeProviderToolTest {
 
       private final TimeProviderTool tool = new TimeProviderTool();
 
@@ -319,7 +328,9 @@ These are pure Java types; no tests needed (no logic to test).
           assertThat(props.getFirst().type()).isEqualTo("string");
           assertThat(props.getFirst().required()).isTrue();
       }
-  }
+
+}
+
   ```
 
 - [ ] **Step 2: Run tests to confirm they fail**
@@ -328,7 +339,7 @@ These are pure Java types; no tests needed (no logic to test).
   ./mvnw test -Dtest=TimeProviderToolTest -q 2>&1 | tail -5
   ```
 
-  Expected: compilation error — `TimeProviderTool` not found.
+Expected: compilation error — `TimeProviderTool` not found.
 
 - [ ] **Step 3: Create `TimeProviderTool.java`**
 
@@ -395,6 +406,7 @@ These are pure Java types; no tests needed (no logic to test).
 ## Task 4: `LocalTimezoneTool` (TDD)
 
 **Files:**
+
 - Create: `src/test/java/org/daneel/tool/LocalTimezoneToolTest.java`
 - Create: `src/main/java/org/daneel/tool/LocalTimezoneTool.java`
 
@@ -405,14 +417,14 @@ These are pure Java types; no tests needed (no logic to test).
   ```java
   package org.daneel.tool;
 
-  import org.junit.jupiter.api.Test;
+import org.daneel.tool.time.LocalTimezoneTool; import org.junit.jupiter.api.Test;
 
-  import java.time.ZoneId;
-  import java.util.Map;
+import java.time.ZoneId;
+import java.util.Map;
 
-  import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-  class LocalTimezoneToolTest {
+class LocalTimezoneToolTest {
 
       private final LocalTimezoneTool tool = new LocalTimezoneTool();
 
@@ -435,7 +447,9 @@ These are pure Java types; no tests needed (no logic to test).
       void properties_isEmpty() {
           assertThat(tool.properties()).isEmpty();
       }
-  }
+
+}
+
   ```
 
 - [ ] **Step 2: Run tests to confirm they fail**
@@ -444,7 +458,7 @@ These are pure Java types; no tests needed (no logic to test).
   ./mvnw test -Dtest=LocalTimezoneToolTest -q 2>&1 | tail -5
   ```
 
-  Expected: compilation error — `LocalTimezoneTool` not found.
+Expected: compilation error — `LocalTimezoneTool` not found.
 
 - [ ] **Step 3: Create `LocalTimezoneTool.java`**
 
@@ -503,6 +517,7 @@ These are pure Java types; no tests needed (no logic to test).
 ## Task 5: Wire `ToolRegistrar` into `ChatConfig`
 
 **Files:**
+
 - Modify: `src/main/java/org/daneel/chat/ChatConfig.java`
 
 The current `ChatConfig` builds the `ChatClient` without tools. Add `ToolRegistrar` as a third
@@ -560,12 +575,12 @@ constructor parameter and call `builder.defaultToolCallbacks(toolRegistrar.getCa
   ```
 
   Expected:
-  - `Tests run: 4, Failures: 0` — ToolRegistrarTest
-  - `Tests run: 5, Failures: 0` — TimeProviderToolTest
-  - `Tests run: 4, Failures: 0` — LocalTimezoneToolTest
-  - `Tests run: 3, Failures: 0` — ChatServiceTest
-  - `Tests run: 2, Failures: 0` — ChatControllerTest
-  - Total: `Tests run: 18, Failures: 0, Errors: 0` and `BUILD SUCCESS`
+    - `Tests run: 4, Failures: 0` — ToolRegistrarTest
+    - `Tests run: 5, Failures: 0` — TimeProviderToolTest
+    - `Tests run: 4, Failures: 0` — LocalTimezoneToolTest
+    - `Tests run: 3, Failures: 0` — ChatServiceTest
+    - `Tests run: 2, Failures: 0` — ChatControllerTest
+    - Total: `Tests run: 18, Failures: 0, Errors: 0` and `BUILD SUCCESS`
 
 - [ ] **Step 3: Commit**
 
@@ -579,6 +594,7 @@ constructor parameter and call `builder.defaultToolCallbacks(toolRegistrar.getCa
 ## Self-Review
 
 **Spec coverage:**
+
 - `ToolProperty` record (Task 1) ✓
 - `DaneelToolInterface` with `name()`, `description()`, `properties()`, `execute(Map)` (Task 1) ✓
 - `ToolRegistrar` collects beans, builds JSON schema, wraps in `ToolCallback` (Task 2) ✓
@@ -591,7 +607,11 @@ constructor parameter and call `builder.defaultToolCallbacks(toolRegistrar.getCa
 **Placeholder scan:** None found.
 
 **Type consistency:**
-- `DaneelToolInterface.execute(Map<String, Object>)` → used consistently in `ToolRegistrar.toCallback()` and in both tool `execute()` method signatures
+
+- `DaneelToolInterface.execute(Map<String, Object>)` → used consistently in `ToolRegistrar.toCallback()` and in both
+  tool `execute()` method signatures
 - `ToolDefinition.builder().name(...).description(...).inputSchema(...).build()` → consistent in `ToolRegistrar`
-- `toolRegistrar.getCallbacks()` → defined in `ToolRegistrar` as `ToolCallback[] getCallbacks()`, used in `ChatConfig` as `defaultToolCallbacks(...)`
-- `ToolProperty(name, description, type, required)` constructor order → consistent across `TimeProviderTool.properties()` and test assertions
+- `toolRegistrar.getCallbacks()` → defined in `ToolRegistrar` as `ToolCallback[] getCallbacks()`, used in `ChatConfig`
+  as `defaultToolCallbacks(...)`
+- `ToolProperty(name, description, type, required)` constructor order → consistent across
+  `TimeProviderTool.properties()` and test assertions

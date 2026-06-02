@@ -1,35 +1,38 @@
-package org.daneel.tool;
+package org.daneel.tool.file;
 
+import java.nio.charset.MalformedInputException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import org.daneel.tool.DaneelToolInterface;
+import org.daneel.tool.ToolProperty;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
-public class DirectoryCreateTool implements DaneelToolInterface {
+public class FileReadTool implements DaneelToolInterface {
 
   private final SandboxFileSystem sandbox;
 
   @Override
   public String name() {
-    return "directory_create";
+    return "file_read";
   }
 
   @Override
   public String description() {
-    return "Creates a directory (and any missing parent directories) inside the sandbox. "
+    return "Reads the contents of a UTF-8 text file inside the sandbox. "
         + "Paths are relative to the sandbox root.";
   }
 
   @Override
   public List<ToolProperty> properties() {
     return List.of(
-        new ToolProperty("path", "Relative path of the directory to create", "string", true));
+        new ToolProperty("path", "Relative path to the file inside the sandbox", "string", true));
   }
 
   @Override
@@ -41,11 +44,13 @@ public class DirectoryCreateTool implements DaneelToolInterface {
     }
     try {
       var resolved = sandbox.resolve(pathRaw.toString());
-      Files.createDirectories(resolved);
-      log.info("directory_create path={}", pathRaw);
-      return "Created directory " + pathRaw + ".";
+      return Files.readString(resolved, StandardCharsets.UTF_8);
     } catch (SandboxAccessException e) {
       return "Error: " + e.getMessage();
+    } catch (MalformedInputException e) {
+      return "Error: not a UTF-8 text file.";
+    } catch (NoSuchFileException e) {
+      return "Error: file not found: " + pathRaw;
     }
   }
 }

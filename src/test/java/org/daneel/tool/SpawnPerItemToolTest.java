@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.camel.ProducerTemplate;
 import org.daneel.task.FanOutItem;
+import org.daneel.tool.spawn.SpawnPerItemTool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

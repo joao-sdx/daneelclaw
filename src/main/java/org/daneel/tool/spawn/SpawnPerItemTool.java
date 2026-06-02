@@ -1,4 +1,4 @@
-package org.daneel.tool;
+package org.daneel.tool.spawn;
 
 import java.time.Instant;
 import java.util.List;
@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.ProducerTemplate;
 import org.daneel.task.FanOutItem;
+import org.daneel.tool.DaneelToolInterface;
+import org.daneel.tool.ToolProperty;
 import org.springframework.stereotype.Component;
 
 @Slf4j

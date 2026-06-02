@@ -1,8 +1,10 @@
-package org.daneel.tool;
+package org.daneel.tool.time;
 
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
+import org.daneel.tool.DaneelToolInterface;
+import org.daneel.tool.ToolProperty;
 import org.springframework.stereotype.Component;
 
 @Component

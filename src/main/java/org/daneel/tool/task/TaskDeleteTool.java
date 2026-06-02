@@ -1,4 +1,4 @@
-package org.daneel.tool;
+package org.daneel.tool.task;
 
 import java.util.List;
 import java.util.Map;
@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.daneel.task.TaskRemovalService;
 import org.daneel.task.TaskStore;
+import org.daneel.tool.DaneelToolInterface;
+import org.daneel.tool.ToolProperty;
 import org.springframework.stereotype.Component;
 
 @Slf4j

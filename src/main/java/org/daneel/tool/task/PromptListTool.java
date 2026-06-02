@@ -1,4 +1,4 @@
-package org.daneel.tool;
+package org.daneel.tool.task;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.daneel.task.PromptCatalog;
+import org.daneel.tool.DaneelToolInterface;
+import org.daneel.tool.ToolProperty;
 import org.springframework.stereotype.Component;
 
 @Slf4j

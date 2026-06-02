@@ -1,4 +1,4 @@
-package org.daneel.tool;
+package org.daneel.tool.file;
 
 public class SandboxAccessException extends RuntimeException {
 

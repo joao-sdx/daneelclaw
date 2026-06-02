@@ -3,6 +3,7 @@ package org.daneel.tool;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
+import org.daneel.tool.speak.SpeakTool;
 import org.junit.jupiter.api.Test;
 
 class SpeakToolTest {

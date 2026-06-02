@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.daneel.task.PlannedTask;
 import org.daneel.task.PromptCatalog;
 import org.daneel.task.TaskStore;
+import org.daneel.tool.task.TaskUpdateTool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

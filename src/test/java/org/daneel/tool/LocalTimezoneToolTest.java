@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.ZoneId;
 import java.util.Map;
+import org.daneel.tool.time.LocalTimezoneTool;
 import org.junit.jupiter.api.Test;
 
 class LocalTimezoneToolTest {
