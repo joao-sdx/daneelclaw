@@ -38,6 +38,11 @@ public class SeoFetchArticleTool implements DaneelToolInterface {
         new ToolProperty("url", "Article URL to fetch content from", "string", true),
         new ToolProperty("keyword", "Optional: stored in YAML frontmatter", "string", false),
         new ToolProperty(
+            "directory",
+            "Optional sandbox-relative directory to save the file (e.g. seo/cto). Defaults to sandbox root.",
+            "string",
+            false),
+        new ToolProperty(
             "return_text",
             "If true, returns the full file content in the response (default: false)",
             "boolean",
@@ -55,14 +60,20 @@ public class SeoFetchArticleTool implements DaneelToolInterface {
       return "Error: url is required";
     }
     var keyword = params.get("keyword");
+    var directory = params.get("directory");
     var returnText = Boolean.parseBoolean(params.getOrDefault("return_text", "false").toString());
     try {
       var content = client.fetchContent(url.toString());
       var fileContent = buildMarkdown(resultId.toString(), url.toString(), keyword, content);
-      var filePath = sandbox.resolve(resultId + ".md");
+      var relPath =
+          (directory != null && !directory.toString().isBlank())
+              ? directory + "/" + resultId + ".md"
+              : resultId + ".md";
+      var filePath = sandbox.resolve(relPath);
+      Files.createDirectories(filePath.getParent());
       Files.writeString(filePath, fileContent);
-      log.info("seo_article_saved file={}.md", resultId);
-      return returnText ? fileContent : "Saved to " + resultId + ".md";
+      log.info("seo_article_saved file={}", relPath);
+      return returnText ? fileContent : "Saved to " + relPath;
     } catch (SandboxAccessException e) {
       return "Error: access denied";
     } catch (Exception e) {

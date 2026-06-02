@@ -41,3 +41,8 @@ daneel:
     bot-token: ${TELEGRAM_BOT_TOKEN:}
     allowed-chat-ids: ${TELEGRAM_ALLOWED_CHAT_IDS:}
     poll-delay-ms: 1000
+
+logging:
+  level:
+    root: INFO
+    org.daneel: DEBUG

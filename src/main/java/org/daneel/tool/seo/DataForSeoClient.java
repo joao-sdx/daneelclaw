@@ -40,6 +40,7 @@ public class DataForSeoClient {
                     "location_name", location,
                     "depth", depth)));
     var raw = post(NEWS_ENDPOINT, body);
+    log.debug("raw: {}", raw);
     var items =
         objectMapper.readTree(raw).path("tasks").path(0).path("result").path(0).path("items");
     var result = new ArrayList<NewsArticle>();
@@ -66,6 +67,7 @@ public class DataForSeoClient {
     var body =
         objectMapper.writeValueAsString(List.of(objectMapper.createObjectNode().put("url", url)));
     var raw = post(CONTENT_ENDPOINT, body);
+    log.debug("seo_content_found {}", raw);
     var topics =
         objectMapper
             .readTree(raw)
