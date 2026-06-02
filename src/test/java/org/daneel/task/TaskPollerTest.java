@@ -11,6 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Instant;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -32,38 +34,44 @@ class TaskPollerTest {
     }
 
     @Test
-    void pollAt_triggersTaskWhenDue() {
+    void findDue_returnsDueTask() {
         when(taskStore.findAll()).thenReturn(List.of(task("t1", "2026-06-01T14:00:00Z", 60, true)));
 
-        poller.pollAt(NOW);
+        var due = poller.findDue(NOW);
+
+        assertThat(due).hasSize(1);
+        assertThat(due.getFirst().id()).isEqualTo("t1");
+    }
+
+    @Test
+    void findDue_excludesFutureTask() {
+        when(taskStore.findAll()).thenReturn(List.of(task("t1", "2026-06-01T18:00:00Z", 60, true)));
+
+        assertThat(poller.findDue(NOW)).isEmpty();
+    }
+
+    @Test
+    void findDue_excludesDisabledTask() {
+        when(taskStore.findAll()).thenReturn(List.of(task("t1", "2026-06-01T14:00:00Z", 60, false)));
+
+        assertThat(poller.findDue(NOW)).isEmpty();
+    }
+
+    @Test
+    void run_executesTask() {
+        var task = task("t1", "2026-06-01T14:00:00Z", 60, true);
+
+        poller.run(task, NOW);
 
         verify(chatService).chat(startsWith("auto-t1-"), eq("resolved prompt"));
     }
 
     @Test
-    void pollAt_skipsTaskNotYetDue() {
-        when(taskStore.findAll()).thenReturn(List.of(task("t1", "2026-06-01T18:00:00Z", 60, true)));
-
-        poller.pollAt(NOW);
-
-        verifyNoInteractions(chatService);
-    }
-
-    @Test
-    void pollAt_skipsDisabledTask() {
-        when(taskStore.findAll()).thenReturn(List.of(task("t1", "2026-06-01T14:00:00Z", 60, false)));
-
-        poller.pollAt(NOW);
-
-        verifyNoInteractions(chatService);
-    }
-
-    @Test
-    void reschedule_advancesRecurringTaskToNextFutureSlot() {
+    void run_advancesRecurringTaskToNextFutureSlot() {
         // 14:00 + 4x60min = 18:00 is the first slot strictly after 17:30
-        when(taskStore.findAll()).thenReturn(List.of(task("t1", "2026-06-01T14:00:00Z", 60, true)));
+        var task = task("t1", "2026-06-01T14:00:00Z", 60, true);
 
-        poller.pollAt(NOW);
+        poller.run(task, NOW);
 
         verify(taskStore).save(argThat(t ->
                 t.id().equals("t1") &&
@@ -73,20 +81,22 @@ class TaskPollerTest {
     }
 
     @Test
-    void reschedule_disablesOneShotTaskAfterRun() {
-        when(taskStore.findAll()).thenReturn(List.of(task("t1", "2026-06-01T14:00:00Z", null, true)));
+    void run_disablesOneShotTaskAfterRun() {
+        var task = task("t1", "2026-06-01T14:00:00Z", null, true);
 
-        poller.pollAt(NOW);
+        poller.run(task, NOW);
 
         verify(taskStore).save(argThat(t -> t.id().equals("t1") && !t.enabled()));
     }
 
     @Test
-    void pollAt_reschedulesEvenWhenExecutionFails() {
-        when(taskStore.findAll()).thenReturn(List.of(task("t1", "2026-06-01T14:00:00Z", 60, true)));
+    void run_reschedulesEvenWhenExecutionFails() {
+        var task = task("t1", "2026-06-01T14:00:00Z", 60, true);
         doThrow(new RuntimeException("LLM down")).when(chatService).chat(any(), any());
 
-        poller.pollAt(NOW);
+        assertThatThrownBy(() -> poller.run(task, NOW))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("LLM down");
 
         verify(taskStore).save(any(PlannedTask.class)); // reschedule still happens
     }
