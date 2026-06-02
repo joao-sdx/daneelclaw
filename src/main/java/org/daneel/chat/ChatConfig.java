@@ -15,6 +15,12 @@ import java.time.Duration;
 @Configuration
 class ChatConfig {
 
+    private static final String SUMMARY_SYSTEM = """
+            Tu es un outil de résumé de conversation. Résume l'échange suivant de façon
+            concise en français, en préservant les faits, décisions, préférences et le
+            contexte importants pour la suite. Ne réponds qu'avec le résumé, sans préambule.
+            """;
+
     @Bean
     ChatClient chatClient(ChatClient.Builder builder,
                           @Value("classpath:system-prompt.md") Resource systemPrompt,
@@ -22,6 +28,13 @@ class ChatConfig {
         return builder
                 .defaultSystem(systemPrompt)
                 .defaultToolCallbacks(toolRegistrar.getCallbacks())
+                .build();
+    }
+
+    @Bean
+    ChatClient summaryChatClient(ChatClient.Builder builder) {
+        return builder
+                .defaultSystem(SUMMARY_SYSTEM)
                 .build();
     }
 
