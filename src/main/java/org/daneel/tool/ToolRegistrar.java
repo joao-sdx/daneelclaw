@@ -9,6 +9,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.daneel.tool.error.ErrorStore;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.definition.ToolDefinition;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ public class ToolRegistrar {
 
   private final List<DaneelToolInterface> tools;
   private final ObjectMapper objectMapper;
+  private final ErrorStore errorStore;
 
   public ToolCallback[] getCallbacks() {
     return tools.stream().map(this::toCallback).toArray(ToolCallback[]::new);
@@ -44,7 +46,13 @@ public class ToolRegistrar {
       public String call(String toolInput) {
         Map<String, Object> params = objectMapper.readValue(toolInput, new TypeReference<>() {});
         log.info("tool_call name={} params={}", tool.name(), params);
-        return tool.execute(params);
+        try {
+          return tool.execute(params);
+        } catch (Exception ex) {
+          log.error("tool_error name={} message={}", tool.name(), ex.getMessage(), ex);
+          errorStore.record(tool.name(), ex.getMessage());
+          return "Error: " + ex.getMessage();
+        }
       }
     };
   }

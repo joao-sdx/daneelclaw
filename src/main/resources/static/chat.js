@@ -49,3 +49,25 @@ inputEl.addEventListener('keydown', e => {
         sendMessage();
     }
 });
+
+const ERROR_POLL_MS = 5000;
+let errorPolling = false;
+
+async function pollErrors() {
+    if (errorPolling) return;
+    errorPolling = true;
+    try {
+        const response = await fetch('/errors');
+        if (!response.ok) return;
+        const errors = await response.json();
+        for (const e of errors) {
+            addBubble('⚠️ ' + e.toolName + ': ' + e.message, 'error');
+        }
+    } catch {
+        // swallow — backend may be temporarily unavailable
+    } finally {
+        errorPolling = false;
+    }
+}
+
+setInterval(pollErrors, ERROR_POLL_MS);

@@ -22,6 +22,9 @@ daneel:
       root: "./rootdir"
     spawn:
       block-timeout-ms: 30000
+    errors:
+      ttl-ms: 300000
+      sweep-interval-ms: 60000
     dataforseo:
       api:
         user: ${DATAFORSEO_USER}
