@@ -61,6 +61,7 @@ public class YetiForceCrmClient {
     var request =
         HttpRequest.newBuilder()
             .uri(URI.create(properties.getUrl() + API_BASE + module + "/Record/" + id))
+            .header("x-raw-data", "1")
             .GET()
             .build();
     var raw = execute(request);
