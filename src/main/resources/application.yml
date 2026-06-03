@@ -5,8 +5,8 @@ spring:
     import: "optional:file:.env[.properties]"
   ai:
     openai:
-      base-url: http://localhost:1234
-      api-key: not-needed
+      base-url: ${LMSTUDIO_BASE_URL:http://localhost:1234}
+      api-key: ${LMSTUDIO_API_KEY:not-needed}
       chat:
         options:
           model: ${LMSTUDIO_MODEL:nvidia/nemotron-3-nano-4b}
