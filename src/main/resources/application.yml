@@ -10,7 +10,7 @@ spring:
       chat:
         options:
           model: ${LMSTUDIO_MODEL:nvidia/nemotron-3-nano-4b}
-          
+
 server:
   port: 8080
 
@@ -47,4 +47,4 @@ daneel:
 logging:
   level:
     root: INFO
-    org.daneel: DEBUG
+    org.daneel: INFO
