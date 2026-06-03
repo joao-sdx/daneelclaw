@@ -118,6 +118,21 @@ class YetiForceCrmClientTest {
   }
 
   @Test
+  void listRecords_extractsRecordsFromResultObject() throws Exception {
+    var r1 = loginOk("tok1");
+    var r2 =
+        ok(
+            "{\"status\":1,\"result\":{\"records\":{\"44\":{\"id\":\"44\",\"lastname\":\"Klouz\"}},"
+                + "\"numberOfRecords\":1,\"isMorePages\":false}}");
+    doReturn(r1).doReturn(r2).when(httpClient).send(any(), any());
+
+    var records = client.listRecords("Contacts", null, 20, 0);
+
+    assertThat(records).hasSize(1);
+    assertThat(records.getFirst().get("lastname")).isEqualTo("Klouz");
+  }
+
+  @Test
   void listRecords_normalizesConditionToBareArrayWithCamelCaseFieldName() throws Exception {
     var r1 = loginOk("tok1");
     var r2 = ok("{\"status\":1,\"result\":[]}");

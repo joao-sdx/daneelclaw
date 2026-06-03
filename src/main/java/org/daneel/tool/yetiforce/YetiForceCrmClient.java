@@ -56,10 +56,16 @@ public class YetiForceCrmClient {
     }
     var raw = execute(builder.build());
     var result = objectMapper.readTree(raw).path("result");
-    if (result.isMissingNode() || result.isNull()) {
-      return List.of();
+    var records = result.path("records");
+    if (records.isObject()) {
+      Map<String, Map<String, Object>> byId =
+          objectMapper.convertValue(records, new TypeReference<>() {});
+      return List.copyOf(byId.values());
     }
-    return objectMapper.convertValue(result, new TypeReference<>() {});
+    if (result.isArray()) {
+      return objectMapper.convertValue(result, new TypeReference<>() {});
+    }
+    return List.of();
   }
 
   /**
@@ -196,10 +202,32 @@ public class YetiForceCrmClient {
       }
     }
     if (response.statusCode() < 200 || response.statusCode() >= 300) {
-      throw new IllegalStateException("YetiForce error status=" + response.statusCode());
+      throw new IllegalStateException(
+          "YetiForce error status=" + response.statusCode() + describeError(response.body()));
     }
     log.debug("yetiforce_response status={}", response.statusCode());
     return response.body();
+  }
+
+  /**
+   * YetiForce returns a JSON error body ({@code {"error":{"message":..,"code":..}}}) on failures —
+   * e.g. an unknown field name in a list condition yields a 500 whose message names the bad field.
+   * Surface that so the caller (and the LLM) sees the actual reason instead of a bare status code.
+   */
+  private String describeError(String body) {
+    if (body == null || body.isBlank()) {
+      return "";
+    }
+    try {
+      var error = objectMapper.readTree(body).path("error");
+      var message = error.path("message");
+      if (message.isTextual() && !message.asText().isBlank()) {
+        return " " + message.asText();
+      }
+    } catch (Exception e) {
+      log.debug("yetiforce_error_body_unparseable", e);
+    }
+    return body.length() > 300 ? " " + body.substring(0, 300) : " " + body;
   }
 
   private HttpResponse<String> sendWithToken(HttpRequest request) throws Exception {
