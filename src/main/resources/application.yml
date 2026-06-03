@@ -34,6 +34,13 @@ daneel:
       api:
         user: ${DATAFORSEO_USER}
         key: ${DATAFORSEO_KEY}
+    yetiforce:
+      url: ${YETIFORCE_URL}
+      api-key: ${YETIFORCE_API_KEY}
+      app-name: ${YETIFORCE_APP_NAME}
+      app-pass: ${YETIFORCE_APP_PASS}
+      user: ${YETIFORCE_USER}
+      password: ${YETIFORCE_PASSWORD}
   scheduler:
     tasks-dir: "./tasks"
     check-interval-ms: 60000

@@ -1,4 +1,4 @@
-package org.daneel.tool;
+package org.daneel.tool.csv;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,8 +8,6 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.daneel.tool.csv.CsvAppendTool;
-import org.daneel.tool.csv.CsvSupport;
 import org.daneel.tool.file.SandboxFileSystem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
