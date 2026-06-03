@@ -8,18 +8,16 @@ tasks:
     vars:
       TOKEN:
         sh: |
-          http --multipart POST "{{.YETIFORCE_URL}}/webservice/WebserviceStandard/Users/Login" \
-            "Authorization:Basic {{.YETIFORCE_BASIC_AUTH}}" \
+          http POST "{{.YETIFORCE_URL}}/webservice/WebserviceStandard/Users/Login" \
+            --auth "{{.YETIFORCE_APP_NAME}}:{{.YETIFORCE_APP_PASS}}" \
             "X-API-KEY:{{.YETIFORCE_API_KEY}}" \
-            "x-encrypted:0" \
             userName="{{.YETIFORCE_USER}}" \
             password="{{.YETIFORCE_PASSWORD}}" | jq -r '.result.token'
     cmds:
       - cmd: |
-          http --multipart POST "{{.YETIFORCE_URL}}/webservice/WebserviceStandard/Users/Login" \
-            "Authorization:Basic {{.YETIFORCE_BASIC_AUTH}}" \
+          http POST "{{.YETIFORCE_URL}}/webservice/WebserviceStandard/Users/Login" \
+            --auth "{{.YETIFORCE_APP_NAME}}:{{.YETIFORCE_APP_PASS}}" \
             "X-API-KEY:{{.YETIFORCE_API_KEY}}" \
-            "x-encrypted:0" \
             userName="{{.YETIFORCE_USER}}" \
             password="{{.YETIFORCE_PASSWORD}}"
       - echo "token={{.TOKEN}}"
