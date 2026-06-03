@@ -2,6 +2,7 @@ package org.daneel.chat;
 
 import java.net.http.HttpClient;
 import java.time.Duration;
+import java.util.concurrent.Semaphore;
 import org.daneel.tool.ToolRegistrar;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.tool.ToolCallback;
@@ -42,7 +43,14 @@ class ChatConfig {
   }
 
   @Bean
-  RestClientCustomizer http11RestClientCustomizer() {
+  Semaphore lmStudioSemaphore() {
+    return new Semaphore(1, true);
+  }
+
+  @Bean
+  RestClientCustomizer http11RestClientCustomizer(
+      Semaphore lmStudioSemaphore,
+      @Value("${daneel.llm.serialize-calls:true}") boolean serializeCalls) {
     var httpClient =
         HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
@@ -50,6 +58,11 @@ class ChatConfig {
             .build();
     var factory = new JdkClientHttpRequestFactory(httpClient);
     factory.setReadTimeout(Duration.ofMinutes(2));
-    return builder -> builder.requestFactory(factory);
+    return builder -> {
+      builder.requestFactory(factory);
+      if (serializeCalls) {
+        builder.requestInterceptor(new SerializingClientHttpRequestInterceptor(lmStudioSemaphore));
+      }
+    };
   }
 }

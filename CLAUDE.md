@@ -72,6 +72,7 @@ Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskLi
 - `daneel.tools.dataforseo.api.key` — set via `DATAFORSEO_KEY` env var; required for SEO tools
 - `daneel.tools.errors.ttl-ms` — how long tool errors are kept in the store before TTL sweep removes them (default 300000 = 5 min)
 - `daneel.tools.errors.sweep-interval-ms` — how often the TTL sweep runs (default 60000 = 1 min)
+- `daneel.llm.serialize-calls` — serialize all LMStudio HTTP calls through a single-permit fair semaphore so only one inference runs at a time (default `true`; prevents concurrent-request failures during fan-out; set to `false` for backends that support concurrent inference)
 
 `src/main/resources/system-prompt.md` — the LLM system prompt (currently French-language, concise/friendly persona).
 
