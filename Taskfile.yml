@@ -6,8 +6,24 @@ tasks:
   yf:test:
     desc: "Login to YetiForce and fetch Contact record c2"
     vars:
+      BASIC_AUTH:
+        sh: printf '%s:%s' "{{.YETIFORCE_APP_NAME}}" "{{.YETIFORCE_APP_PASS}}" | base64
       TOKEN:
-        sh: ./yetiforce-ws-login.sh
+        sh: >
+          http --ignore-stdin --verify=no -b
+          POST "{{.YETIFORCE_URL}}/webservice/WebserviceStandard/Users/Login"
+          "Authorization:Basic {{.BASIC_AUTH}}"
+          "X-API-KEY:{{.YETIFORCE_API_KEY}}"
+          userName="{{.YETIFORCE_USER}}"
+          password="{{.YETIFORCE_PASSWORD}}" | jq -r '.result.token'
     cmds:
-      - echo "token={{.TOKEN}}"
-      - http GET "{{.WS_URL}}/webservice/WebserviceStandard/Contacts/Record/c2" "x-token:{{.TOKEN}}"
+      - cmd: echo "token={{.TOKEN}}"
+        silent: true
+      - cmd: >
+          http --ignore-stdin --verify=no
+          GET "{{.YETIFORCE_URL}}/webservice/WebserviceStandard/Contacts/Record/208"
+          "Authorization:Basic {{.BASIC_AUTH}}"
+          "X-API-KEY:{{.YETIFORCE_API_KEY}}"
+          "x-token:{{.TOKEN}}"
+          "x-raw-data:1"
+        silent: true
