@@ -11,6 +11,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -24,6 +25,7 @@ public class YetiForceCrmClient {
   private final HttpClient httpClient;
   private volatile String token;
 
+  @Autowired
   public YetiForceCrmClient(YetiForceProperties properties, ObjectMapper objectMapper) {
     this(
         properties,
