@@ -30,7 +30,7 @@ class ChatConfig {
 
   @Bean
   ChatClient toolSelectorChatClient(ChatClient.Builder builder) {
-    return builder.defaultToolCallbacks(new ToolCallback[0]).build();
+    return builder.build();
   }
 
   @Bean
