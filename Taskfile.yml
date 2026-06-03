@@ -1,6 +1,6 @@
 version: '3'
 
-dotenv: ['.env']
+dotenv: [ '.env' ]
 
 tasks:
   yf:test:
@@ -8,10 +8,11 @@ tasks:
     vars:
       TOKEN:
         sh: |
-          http POST "$YETIFORCE_URL/webservice/WebserviceStandard/Users/Login" \
-            "X-API-KEY:$YETIFORCE_API_KEY" \
-            userName="$YETIFORCE_USER" \
-            password="$YETIFORCE_PASSWORD" | jq -r '.result.token'
+          http POST "{{.YETIFORCE_URL}}/webservice/WebserviceStandard/Users/Login" \
+            "X-API-KEY:{{.YETIFORCE_API_KEY}}" \
+            userName="{{.YETIFORCE_USER}}" \
+            password="{{.YETIFORCE_PASSWORD}}" \
+            --ignore-stdin | jq -r '.result.token'
     cmds:
       - echo "token={{.TOKEN}}"
-      - http GET "$YETIFORCE_URL/webservice/WebserviceStandard/Contacts/Record/c2" "x-token:{{.TOKEN}}"
+      - http GET "{{.YETIFORCE_URL}}/webservice/WebserviceStandard/Contacts/Record/c2" "x-token:{{.TOKEN}}"
