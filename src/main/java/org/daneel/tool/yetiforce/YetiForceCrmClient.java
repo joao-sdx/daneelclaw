@@ -6,6 +6,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -101,6 +103,12 @@ public class YetiForceCrmClient {
     execute(request);
   }
 
+  private String basicAuth() {
+    var credentials = properties.getAppName() + ":" + properties.getAppPass();
+    return "Basic "
+        + Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
+  }
+
   private synchronized void login() throws Exception {
     var body =
         objectMapper.writeValueAsString(
@@ -108,6 +116,7 @@ public class YetiForceCrmClient {
     var request =
         HttpRequest.newBuilder()
             .uri(URI.create(properties.getUrl() + API_BASE + "Users/Login"))
+            .header("Authorization", basicAuth())
             .header("X-API-KEY", properties.getApiKey())
             .header("Content-Type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(body))
@@ -148,8 +157,12 @@ public class YetiForceCrmClient {
   }
 
   private HttpResponse<String> sendWithToken(HttpRequest request) throws Exception {
-    var withToken =
-        HttpRequest.newBuilder(request, (n, v) -> true).header("x-token", token).build();
-    return httpClient.send(withToken, HttpResponse.BodyHandlers.ofString());
+    var authenticated =
+        HttpRequest.newBuilder(request, (n, v) -> true)
+            .header("Authorization", basicAuth())
+            .header("X-API-KEY", properties.getApiKey())
+            .header("x-token", token)
+            .build();
+    return httpClient.send(authenticated, HttpResponse.BodyHandlers.ofString());
   }
 }

@@ -16,6 +16,8 @@ public class YetiForceProperties {
 
   @NotBlank private String url;
   @NotBlank private String apiKey;
+  @NotBlank private String appName;
+  @NotBlank private String appPass;
   @NotBlank private String user;
   @NotBlank private String password;
 }

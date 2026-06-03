@@ -34,6 +34,8 @@ class YetiForceCrmClientTest {
     var props = new YetiForceProperties();
     props.setUrl("http://crm.test");
     props.setApiKey("test-key");
+    props.setAppName("app");
+    props.setAppPass("app-secret");
     props.setUser("admin");
     props.setPassword("secret");
     client = new YetiForceCrmClient(props, new ObjectMapper(), httpClient);
