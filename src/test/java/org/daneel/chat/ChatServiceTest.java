@@ -1,6 +1,7 @@
 package org.daneel.chat;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.clearInvocations;
@@ -8,7 +9,9 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
+import org.daneel.tool.ToolSelector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +19,7 @@ import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.tool.ToolCallback;
 
 @ExtendWith(MockitoExtension.class)
 class ChatServiceTest {
@@ -26,13 +30,27 @@ class ChatServiceTest {
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   private ChatClient summaryChatClient;
 
+  @Mock private ToolSelector toolSelector;
+
   private ChatService chatService;
 
   // charThreshold=200, keepLast=2 — low values to test auto-compact in unit tests
   @BeforeEach
   void setUp() {
-    chatService = new ChatService(chatClient, summaryChatClient, 200, 2);
+    chatService = new ChatService(chatClient, summaryChatClient, toolSelector, 200, 2);
+    // default: selector returns no tools (pure-chat path)
+    lenient().when(toolSelector.select(anyList())).thenReturn(new ToolCallback[0]);
+    // stub both call paths: without and with toolCallbacks
     lenient().when(chatClient.prompt().messages(anyList()).call().content()).thenReturn("AI reply");
+    lenient()
+        .when(
+            chatClient
+                .prompt()
+                .messages(anyList())
+                .toolCallbacks(any(ToolCallback[].class))
+                .call()
+                .content())
+        .thenReturn("AI reply");
     lenient()
         .when(summaryChatClient.prompt().user(anyString()).call().content())
         .thenReturn("SUMMARY");
@@ -90,6 +108,23 @@ class ChatServiceTest {
   void chat_normalMessage_underThreshold_doesNotCompact() {
     chatService.chat("s1", "salut");
     verifyNoInteractions(summaryChatClient);
+  }
+
+  @Test
+  void chat_toolSelectorCalled_forEveryUserMessage() {
+    chatService.chat("s1", "hello");
+    chatService.chat("s1", "world");
+    verify(toolSelector, times(2)).select(anyList());
+  }
+
+  @Test
+  void chat_withToolsSelected_callSucceeds() {
+    var fakeCallback = org.mockito.Mockito.mock(ToolCallback.class);
+    when(toolSelector.select(anyList())).thenReturn(new ToolCallback[] {fakeCallback});
+
+    var res = chatService.chat("s1", "écris bonjour dans test.txt");
+
+    assertThat(res.message()).isEqualTo("AI reply");
   }
 
   @Test
