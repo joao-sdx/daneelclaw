@@ -7,18 +7,7 @@ tasks:
     desc: "Login to YetiForce and fetch Contact record c2"
     vars:
       TOKEN:
-        sh: |
-          http POST "{{.YETIFORCE_URL}}/webservice/WebserviceStandard/Users/Login" \
-            --auth "{{.YETIFORCE_APP_NAME}}:{{.YETIFORCE_APP_PASS}}" \
-            "X-API-KEY:{{.YETIFORCE_API_KEY}}" \
-            userName="{{.YETIFORCE_USER}}" \
-            password="{{.YETIFORCE_PASSWORD}}" | jq -r '.result.token'
+        sh: ./yetiforce-ws-login.sh
     cmds:
-      - cmd: |
-          http POST "{{.YETIFORCE_URL}}/webservice/WebserviceStandard/Users/Login" \
-            --auth "{{.YETIFORCE_APP_NAME}}:{{.YETIFORCE_APP_PASS}}" \
-            "X-API-KEY:{{.YETIFORCE_API_KEY}}" \
-            userName="{{.YETIFORCE_USER}}" \
-            password="{{.YETIFORCE_PASSWORD}}"
       - echo "token={{.TOKEN}}"
-      - http GET "{{.YETIFORCE_URL}}/webservice/WebserviceStandard/Contacts/Record/c2" "x-token:{{.TOKEN}}"
+      - http GET "{{.WS_URL}}/webservice/WebserviceStandard/Contacts/Record/c2" "x-token:{{.TOKEN}}"
