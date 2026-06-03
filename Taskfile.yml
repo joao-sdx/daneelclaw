@@ -1,0 +1,16 @@
+version: '3'
+
+dotenv: ['.env']
+
+tasks:
+  yf:test:
+    desc: "Login to YetiForce and fetch Contact record c2"
+    cmds:
+      - |
+        TOKEN=$(http POST "$YETIFORCE_URL/webservice/WebserviceStandard/Users/Login" \
+          "X-API-KEY:$YETIFORCE_API_KEY" \
+          userName="$YETIFORCE_USER" \
+          password="$YETIFORCE_PASSWORD" | jq -r '.result.token')
+        echo "token=$TOKEN"
+        http GET "$YETIFORCE_URL/webservice/WebserviceStandard/Contacts/Record/c2" \
+          "x-token:$TOKEN"
