@@ -32,7 +32,7 @@ DaneelClaw is a personal AI assistant: a chat interface backed by a local LLM (v
 
 `ChatController` accepts `POST /chat` with `{sessionId, message}`. `ChatService` maintains per-session conversation history in a `ConcurrentHashMap` and calls Spring AI's `ChatClient` with the full history and all registered tool callbacks. History is auto-compacted when it exceeds 8000 characters (configurable): the `summaryChatClient` bean (tool-free) produces a summary injected as a `SystemMessage`, keeping only the last 4 messages. `/clear` wipes history; `/compact` forces immediate compaction.
 
-`ChatConfig` wires two `ChatClient` beans: the main one (has tools) and `summaryChatClient` (no tools, used for compaction).
+`ChatConfig` wires three `ChatClient` beans: the main one (no default tools — tools are bound per-request), `summaryChatClient` (no tools, used for compaction), and `toolSelectorChatClient` (no tools, used for per-message tool selection).
 
 ### Task Scheduling (`org.daneel.task`)
 
@@ -44,7 +44,9 @@ DaneelClaw is a personal AI assistant: a chat interface backed by a local LLM (v
 
 ### Tool System (`org.daneel.tool`)
 
-`DaneelToolInterface` is the contract for all tools: name, description, `List<ToolProperty>`, and an `execute(Map<String,Object>)` method. `ToolRegistrar` is a `@Component` that collects all `DaneelToolInterface` beans at startup, generates a JSON schema from their `ToolProperty` metadata, and produces a `ToolCallback[]` array that `ChatConfig` passes to the main `ChatClient`.
+`DaneelToolInterface` is the contract for all tools: name, description, `List<ToolProperty>`, and an `execute(Map<String,Object>)` method. `ToolRegistrar` is a `@Component` that collects all `DaneelToolInterface` beans at startup and generates a JSON schema from their `ToolProperty` metadata. It exposes three methods: `getCallbacks()` (all tools), `getCallbacks(Collection<String> names)` (filtered subset by name), and `catalog()` (ordered `name → description` map used by the tool selector).
+
+`ToolSelector` is a `@Component` that runs before each user turn to build the per-request tool list. It calls `toolSelectorChatClient` with a system prompt containing the full tool catalog (one `- name: description` line per tool) and a transcript of the last `history-window` messages, asking the model to return a JSON array of relevant tool names. The result is parsed (with a substring-scan fallback), filtered to known names, and the matching `ToolCallback[]` is bound to the main chat call via `.toolCallbacks(...)`. An empty response produces a tool-free turn. On any exception, `ToolSelector` falls back to all tools so requests never fail due to the selection step. Every selection is logged as `tool_select count=.. names=..`.
 
 Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskListTool`, `TaskGetTool`, `PromptListTool`, `PromptCreateTool`, `TimeProviderTool`, `LocalTimezoneTool`, `SpeakTool` (macOS `say` command), `SpawnPerItemTool` (fan-out: spawns one sub-run per item, blocks until all finish or timeout, returns a summary; if it times out returns a `batch_id` to poll), `FanOutStatusTool` (name `fanout_status`: check progress of a timed-out batch by `batch_id`), `FileReadTool`, `FileWriteTool`, `FileDeleteTool`, `FileMoveTool`, `FilePropertiesTool`, `DirectoryCreateTool`, `DirectoryListTool` (sandboxed filesystem access — all paths relative to the configured root, traversal outside root is rejected). `CsvHeadersTool`, `CsvReadTool`, `CsvCreateTool`, `CsvAppendTool`, `CsvFilterCopyTool` (sandboxed CSV access — all under the same `daneel.tools.files.root` sandbox; `csv_headers` returns column names as a JSON array, `csv_read` returns rows as a `{rowIndex: {col: val}}` JSON object, `csv_create` creates a new CSV with headers and optional rows, `csv_append` appends a row matching column order, `csv_filter_copy` copies selected columns with optional rename and row limit). `SeoSearchTool`, `SeoFetchArticleTool`, `SeoSearchAndFetchTool` (DataForSEO integration — `seo_search` calls Google News Live Advanced and returns a JSON array of articles with `result_id`, title, url, domain, and published; `seo_fetch_article` fetches article content via DataForSEO's content parsing API and saves it as a sandboxed `.md` file with YAML frontmatter, accepts an optional `directory` param to save into a subdirectory; `seo_search_and_fetch` combines both — searches and saves all results in one call, requires `keyword` and `directory`; credentials required via `DATAFORSEO_USER` and `DATAFORSEO_KEY` env vars).
 
@@ -70,6 +72,8 @@ Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskLi
 - `daneel.tools.spawn.block-timeout-ms` — how long `spawn_per_item` blocks waiting for all sub-runs before returning a poll message (default 30000)
 - `daneel.tools.dataforseo.api.user` — set via `DATAFORSEO_USER` env var; required for SEO tools
 - `daneel.tools.dataforseo.api.key` — set via `DATAFORSEO_KEY` env var; required for SEO tools
+- `daneel.tools.select.enabled` — run a dedicated SLM call before each user turn to select relevant tools (default `true`; set to `false` to revert to sending all tools on every request)
+- `daneel.tools.select.history-window` — number of recent messages passed to the tool selector for context (default `4`)
 - `daneel.tools.errors.ttl-ms` — how long tool errors are kept in the store before TTL sweep removes them (default 300000 = 5 min)
 - `daneel.tools.errors.sweep-interval-ms` — how often the TTL sweep runs (default 60000 = 1 min)
 - `daneel.llm.serialize-calls` — serialize all LMStudio HTTP calls through a single-permit fair semaphore so only one inference runs at a time (default `true`; prevents concurrent-request failures during fan-out; set to `false` for backends that support concurrent inference)
@@ -78,7 +82,9 @@ Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskLi
 
 ## Testing Patterns
 
-- `ChatServiceTest` mocks `ChatClient` with `Answers.RETURNS_DEEP_STUBS` and uses low thresholds (200 chars, keep 2) to exercise compaction logic without huge histories.
+- `ChatServiceTest` mocks `ChatClient` with `Answers.RETURNS_DEEP_STUBS` and uses low thresholds (200 chars, keep 2) to exercise compaction logic without huge histories. Also mocks `ToolSelector` (default: returns empty array).
+- `ToolSelectorTest` mocks `toolSelectorChatClient` with `RETURNS_DEEP_STUBS` and uses a real `ToolRegistrar` with stub tools; covers JSON parse, substring fallback, empty response, exception fallback, and disabled mode.
+- `ToolRegistrarTest` covers `catalog()` and the filtered `getCallbacks(names)` overload.
 - `TaskStoreTest` uses JUnit 5 `@TempDir` for isolated file I/O.
 - Tool tests mock `TaskStore` / `PromptCatalog` and verify with `ArgumentCaptor`.
 - `PromptCreateToolTest` is known-flaky when run in suite (timing-sensitive filename generation); passes reliably in isolation.

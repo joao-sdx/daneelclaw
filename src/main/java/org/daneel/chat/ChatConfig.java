@@ -3,7 +3,6 @@ package org.daneel.chat;
 import java.net.http.HttpClient;
 import java.time.Duration;
 import java.util.concurrent.Semaphore;
-import org.daneel.tool.ToolRegistrar;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,13 +24,13 @@ class ChatConfig {
 
   @Bean
   ChatClient chatClient(
-      ChatClient.Builder builder,
-      @Value("classpath:system-prompt.md") Resource systemPrompt,
-      ToolRegistrar toolRegistrar) {
-    return builder
-        .defaultSystem(systemPrompt)
-        .defaultToolCallbacks(toolRegistrar.getCallbacks())
-        .build();
+      ChatClient.Builder builder, @Value("classpath:system-prompt.md") Resource systemPrompt) {
+    return builder.defaultSystem(systemPrompt).build();
+  }
+
+  @Bean
+  ChatClient toolSelectorChatClient(ChatClient.Builder builder) {
+    return builder.defaultToolCallbacks(new ToolCallback[0]).build();
   }
 
   @Bean

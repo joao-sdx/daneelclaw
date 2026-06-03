@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.daneel.task.PromptDocument;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class PromptCreateTool implements DaneelToolInterface {
+
+  private static final AtomicLong SEQUENCE = new AtomicLong();
 
   private final String tasksDir;
   private final ObjectMapper objectMapper;
@@ -71,7 +74,7 @@ public class PromptCreateTool implements DaneelToolInterface {
     var summary = summaryRaw.toString();
     var body = bodyRaw.toString();
 
-    var fileName = "p" + Instant.now().toEpochMilli() + ".md";
+    var fileName = "p" + Instant.now().toEpochMilli() + "-" + SEQUENCE.getAndIncrement() + ".md";
     var dir = Path.of(tasksDir);
     Files.createDirectories(dir);
     Files.writeString(dir.resolve(fileName), PromptDocument.render(summary, body));

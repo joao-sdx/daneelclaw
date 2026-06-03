@@ -3,9 +3,12 @@ package org.daneel.tool;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +28,22 @@ public class ToolRegistrar {
 
   public ToolCallback[] getCallbacks() {
     return tools.stream().map(this::toCallback).toArray(ToolCallback[]::new);
+  }
+
+  public ToolCallback[] getCallbacks(Collection<String> names) {
+    Set<String> nameSet = new LinkedHashSet<>(names);
+    return tools.stream()
+        .filter(t -> nameSet.contains(t.name()))
+        .map(this::toCallback)
+        .toArray(ToolCallback[]::new);
+  }
+
+  public Map<String, String> catalog() {
+    var result = new LinkedHashMap<String, String>();
+    for (var tool : tools) {
+      result.put(tool.name(), tool.description());
+    }
+    return result;
   }
 
   private ToolCallback toCallback(DaneelToolInterface tool) {

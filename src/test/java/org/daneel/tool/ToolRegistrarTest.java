@@ -69,6 +69,53 @@ class ToolRegistrarTest {
     assertThat(schema).contains("\"type\":\"string\"");
   }
 
+  @Test
+  void catalog_returnsAllNamesAndDescriptions() {
+    var tool1 = new StubTool("tool_one", "Desc One", List.of(), "r1");
+    var tool2 = new StubTool("tool_two", "Desc Two", List.of(), "r2");
+    var registrar = new ToolRegistrar(List.of(tool1, tool2), objectMapper, errorStore);
+
+    var catalog = registrar.catalog();
+
+    assertThat(catalog).containsEntry("tool_one", "Desc One");
+    assertThat(catalog).containsEntry("tool_two", "Desc Two");
+    assertThat(catalog).hasSize(2);
+  }
+
+  @Test
+  void getCallbacks_withNames_returnsOnlyMatchingTools() {
+    var tool1 = new StubTool("tool_one", "Desc One", List.of(), "r1");
+    var tool2 = new StubTool("tool_two", "Desc Two", List.of(), "r2");
+    var tool3 = new StubTool("tool_three", "Desc Three", List.of(), "r3");
+    var registrar = new ToolRegistrar(List.of(tool1, tool2, tool3), objectMapper, errorStore);
+
+    var callbacks = registrar.getCallbacks(List.of("tool_one", "tool_three"));
+
+    assertThat(callbacks).hasSize(2);
+    assertThat(callbacks[0].getToolDefinition().name()).isEqualTo("tool_one");
+    assertThat(callbacks[1].getToolDefinition().name()).isEqualTo("tool_three");
+  }
+
+  @Test
+  void getCallbacks_withEmptyNames_returnsEmpty() {
+    var tool1 = new StubTool("tool_one", "Desc One", List.of(), "r1");
+    var registrar = new ToolRegistrar(List.of(tool1), objectMapper, errorStore);
+
+    var callbacks = registrar.getCallbacks(List.of());
+
+    assertThat(callbacks).isEmpty();
+  }
+
+  @Test
+  void getCallbacks_withUnknownNames_returnsEmpty() {
+    var tool1 = new StubTool("tool_one", "Desc One", List.of(), "r1");
+    var registrar = new ToolRegistrar(List.of(tool1), objectMapper, errorStore);
+
+    var callbacks = registrar.getCallbacks(List.of("nonexistent"));
+
+    assertThat(callbacks).isEmpty();
+  }
+
   private record StubTool(
       String name, String description, List<ToolProperty> properties, String result)
       implements DaneelToolInterface {

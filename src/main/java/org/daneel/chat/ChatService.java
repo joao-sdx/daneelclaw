@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.daneel.tool.ToolSelector;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -27,16 +28,19 @@ public class ChatService {
   private final Map<String, List<Message>> history = new ConcurrentHashMap<>();
   private final ChatClient chatClient;
   private final ChatClient summaryChatClient;
+  private final ToolSelector toolSelector;
   private final int charThreshold;
   private final int keepLast;
 
   public ChatService(
       @Qualifier("chatClient") ChatClient chatClient,
       @Qualifier("summaryChatClient") ChatClient summaryChatClient,
+      ToolSelector toolSelector,
       @Value("${daneel.chat.compact.char-threshold:8000}") int charThreshold,
       @Value("${daneel.chat.compact.keep-last-messages:4}") int keepLast) {
     this.chatClient = chatClient;
     this.summaryChatClient = summaryChatClient;
+    this.toolSelector = toolSelector;
     this.charThreshold = charThreshold;
     this.keepLast = keepLast;
   }
@@ -70,7 +74,12 @@ public class ChatService {
     }
 
     messages.add(new UserMessage(userMessage));
-    var rawReply = chatClient.prompt().messages(messages).call().content();
+    var selected = toolSelector.select(messages);
+    var spec = chatClient.prompt().messages(messages);
+    if (selected.length > 0) {
+      spec = spec.toolCallbacks(selected);
+    }
+    var rawReply = spec.call().content();
     var reply = rawReply != null ? rawReply : "";
     messages.add(new AssistantMessage(reply));
     log.info("chat_service sessionId={} historySize={}", sessionId, messages.size());
