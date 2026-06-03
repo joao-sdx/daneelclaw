@@ -11,11 +11,13 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -113,6 +115,30 @@ class YetiForceCrmClientTest {
     var result = client.createRecord("Accounts", Map.of("accountname", "Acme"));
 
     assertThat(result.get("id")).isEqualTo("42");
+  }
+
+  @Test
+  void listRecords_normalizesConditionToBareArrayWithCamelCaseFieldName() throws Exception {
+    var r1 = loginOk("tok1");
+    var r2 = ok("{\"status\":1,\"result\":[]}");
+    doReturn(r1).doReturn(r2).when(httpClient).send(any(), any());
+
+    client.listRecords(
+        "Contacts",
+        "{\"conditions\":[{\"fieldname\":\"lastname\",\"value\":\"Klouz\",\"operator\":\"e\"}]}",
+        20,
+        0);
+
+    var captor = ArgumentCaptor.forClass(HttpRequest.class);
+    verify(httpClient, times(2)).send(captor.capture(), any());
+    var condition = captor.getAllValues().get(1).headers().firstValue("x-condition").orElseThrow();
+    var node = new ObjectMapper().readTree(condition);
+    assertThat(node.isArray()).isTrue();
+    assertThat(node.get(0).get("fieldName").asText()).isEqualTo("lastname");
+    assertThat(node.get(0).get("value").asText()).isEqualTo("Klouz");
+    assertThat(node.get(0).get("operator").asText()).isEqualTo("e");
+    assertThat(node.get(0).has("fieldname")).isFalse();
+    assertThat(condition).doesNotContain("conditions");
   }
 
   @Test

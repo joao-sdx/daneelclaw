@@ -37,7 +37,7 @@ public class LeadListTool implements DaneelToolInterface {
         new ToolProperty(
             "conditions",
             "Optional JSON filter. "
-                + "Example: {\"conditions\":[{\"fieldname\":\"lastname\",\"value\":\"Smith\",\"operator\":\"e\"}]}",
+                + "Example: [{\"fieldName\":\"lastname\",\"value\":\"Smith\",\"operator\":\"e\"}]",
             "string",
             false),
         new ToolProperty("limit", "Max records to return (default 20)", "integer", false),

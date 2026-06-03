@@ -37,7 +37,7 @@ public class AccountListTool implements DaneelToolInterface {
         new ToolProperty(
             "conditions",
             "Optional JSON filter. "
-                + "Example: {\"conditions\":[{\"fieldname\":\"accountname\",\"value\":\"Acme\",\"operator\":\"e\"}]}",
+                + "Example: [{\"fieldName\":\"accountname\",\"value\":\"Acme\",\"operator\":\"e\"}]",
             "string",
             false),
         new ToolProperty("limit", "Max records to return (default 20)", "integer", false),

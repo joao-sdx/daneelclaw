@@ -37,7 +37,7 @@ public class SalesProcessListTool implements DaneelToolInterface {
         new ToolProperty(
             "conditions",
             "Optional JSON filter. "
-                + "Example: {\"conditions\":[{\"fieldname\":\"subject\",\"value\":\"Deal\",\"operator\":\"e\"}]}",
+                + "Example: [{\"fieldName\":\"subject\",\"value\":\"Deal\",\"operator\":\"e\"}]",
             "string",
             false),
         new ToolProperty("limit", "Max records to return (default 20)", "integer", false),

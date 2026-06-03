@@ -1,7 +1,9 @@
 package org.daneel.tool.yetiforce;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -48,8 +50,9 @@ public class YetiForceCrmClient {
             .header("x-row-limit", String.valueOf(limit))
             .header("x-row-offset", String.valueOf(offset))
             .GET();
-    if (conditions != null && !conditions.isBlank()) {
-      builder.header("x-condition", conditions);
+    var condition = normalizeCondition(conditions);
+    if (condition != null) {
+      builder.header("x-condition", condition);
     }
     var raw = execute(builder.build());
     var result = objectMapper.readTree(raw).path("result");
@@ -57,6 +60,35 @@ public class YetiForceCrmClient {
       return List.of();
     }
     return objectMapper.convertValue(result, new TypeReference<>() {});
+  }
+
+  /**
+   * YetiForce's {@code x-condition} header expects a single condition object or a bare array of
+   * them, each keyed by {@code fieldName}; malformed input yields a 500. Normalize the looser
+   * shapes an LLM may produce: unwrap a stray {@code conditions} wrapper, coerce a single object to
+   * an array, and rename {@code fieldname} to {@code fieldName}.
+   */
+  private String normalizeCondition(String conditions) throws Exception {
+    if (conditions == null || conditions.isBlank()) {
+      return null;
+    }
+    var node = objectMapper.readTree(conditions);
+    var rules = node.has("conditions") ? node.get("conditions") : node;
+    var array = objectMapper.createArrayNode();
+    if (rules.isArray()) {
+      rules.forEach(rule -> array.add(normalizeRule(rule)));
+    } else {
+      array.add(normalizeRule(rules));
+    }
+    return objectMapper.writeValueAsString(array);
+  }
+
+  private JsonNode normalizeRule(JsonNode rule) {
+    if (rule instanceof ObjectNode object && object.has("fieldname") && !object.has("fieldName")) {
+      object.set("fieldName", object.get("fieldname"));
+      object.remove("fieldname");
+    }
+    return rule;
   }
 
   public Map<String, Object> getRecord(String module, String id) throws Exception {
