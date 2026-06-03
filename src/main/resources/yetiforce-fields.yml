@@ -1,0 +1,125 @@
+# Field names are defaults for standard YetiForce installations.
+# Verify and adjust against your instance via Administration → Studio.
+Leads:
+  - name: lastname
+    type: string
+    required: true
+    description: "Last name"
+  - name: firstname
+    type: string
+    required: false
+    description: "First name"
+  - name: company
+    type: string
+    required: false
+    description: "Company name"
+  - name: email
+    type: string
+    required: false
+    description: "Email address"
+  - name: phone
+    type: string
+    required: false
+    description: "Phone number"
+  - name: leadsource
+    type: string
+    required: false
+    description: "Lead source (e.g. Web, Cold Call, Partner)"
+  - name: description
+    type: string
+    required: false
+    description: "Notes or description"
+
+Accounts:
+  - name: accountname
+    type: string
+    required: true
+    description: "Account/company name"
+  - name: website
+    type: string
+    required: false
+    description: "Website URL"
+  - name: phone
+    type: string
+    required: false
+    description: "Main phone number"
+  - name: email1
+    type: string
+    required: false
+    description: "Primary email"
+  - name: industry
+    type: string
+    required: false
+    description: "Industry sector"
+  - name: description
+    type: string
+    required: false
+    description: "Notes or description"
+
+Contacts:
+  - name: lastname
+    type: string
+    required: true
+    description: "Last name"
+  - name: firstname
+    type: string
+    required: false
+    description: "First name"
+  - name: email
+    type: string
+    required: false
+    description: "Email address"
+  - name: phone
+    type: string
+    required: false
+    description: "Phone number"
+  - name: title
+    type: string
+    required: false
+    description: "Job title"
+  - name: department
+    type: string
+    required: false
+    description: "Department"
+  - name: account_id
+    type: string
+    required: false
+    description: "ID of the related Account record"
+  - name: description
+    type: string
+    required: false
+    description: "Notes or description"
+
+SalesProcesses:
+  - name: subject
+    type: string
+    required: true
+    description: "Process subject/title"
+  - name: closingdate
+    type: string
+    required: false
+    description: "Expected closing date (YYYY-MM-DD)"
+  - name: amount
+    type: string
+    required: false
+    description: "Deal amount"
+  - name: sales_stage
+    type: string
+    required: false
+    description: "Stage (e.g. Prospecting, Proposal, Closed Won)"
+  - name: probability
+    type: string
+    required: false
+    description: "Win probability percentage (0-100)"
+  - name: account_id
+    type: string
+    required: false
+    description: "ID of the related Account record"
+  - name: contact_id
+    type: string
+    required: false
+    description: "ID of the related Contact record"
+  - name: description
+    type: string
+    required: false
+    description: "Notes or description"
