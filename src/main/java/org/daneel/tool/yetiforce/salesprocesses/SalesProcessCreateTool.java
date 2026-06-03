@@ -28,19 +28,19 @@ public class SalesProcessCreateTool implements DaneelToolInterface {
 
   @Override
   public String description() {
-    return "Creates a new SalesProcesses record in YetiForce CRM. Returns the created record's id and name.";
+    return "Creates a new SSalesProcesses record in YetiForce CRM. Returns the created record's id and name.";
   }
 
   @Override
   public List<ToolProperty> properties() {
-    return fieldsConfig.getFields("SalesProcesses").stream()
+    return fieldsConfig.getFields("SSalesProcesses").stream()
         .map(f -> new ToolProperty(f.name(), f.description(), f.type(), f.required()))
         .toList();
   }
 
   @Override
   public String execute(Map<String, Object> params) {
-    for (var field : fieldsConfig.getFields("SalesProcesses")) {
+    for (var field : fieldsConfig.getFields("SSalesProcesses")) {
       if (field.required()) {
         var val = params.get(field.name());
         if (val == null || val.toString().isBlank()) {
@@ -49,14 +49,14 @@ public class SalesProcessCreateTool implements DaneelToolInterface {
       }
     }
     var data = new HashMap<String, Object>();
-    for (var field : fieldsConfig.getFields("SalesProcesses")) {
+    for (var field : fieldsConfig.getFields("SSalesProcesses")) {
       var val = params.get(field.name());
       if (val != null && !val.toString().isBlank()) {
         data.put(field.name(), val);
       }
     }
     try {
-      var result = client.createRecord("SalesProcesses", data);
+      var result = client.createRecord("SSalesProcesses", data);
       log.info("yetiforce_sales_process_create id={}", result.get("id"));
       return objectMapper.writeValueAsString(result);
     } catch (Exception e) {

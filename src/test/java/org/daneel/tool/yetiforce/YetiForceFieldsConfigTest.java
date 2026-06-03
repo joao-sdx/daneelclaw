@@ -9,14 +9,10 @@ class YetiForceFieldsConfigTest {
   private static final YetiForceFieldsConfig CONFIG = new YetiForceFieldsConfig();
 
   @Test
-  void getFields_leads_returnsFieldsIncludingRequiredLastname() {
+  void getFields_leads_returnsEnabledFieldsIncludingARequiredOne() {
     assertThat(CONFIG.getFields("Leads")).isNotEmpty();
-    assertThat(CONFIG.getFields("Leads"))
-        .anySatisfy(
-            f -> {
-              assertThat(f.name()).isEqualTo("lastname");
-              assertThat(f.required()).isTrue();
-            });
+    assertThat(CONFIG.getFields("Leads")).allMatch(YetiForceField::daneel);
+    assertThat(CONFIG.getFields("Leads")).anyMatch(YetiForceField::required);
   }
 
   @Test
@@ -24,7 +20,7 @@ class YetiForceFieldsConfigTest {
     assertThat(CONFIG.getFields("Leads")).isNotEmpty();
     assertThat(CONFIG.getFields("Accounts")).isNotEmpty();
     assertThat(CONFIG.getFields("Contacts")).isNotEmpty();
-    assertThat(CONFIG.getFields("SalesProcesses")).isNotEmpty();
+    assertThat(CONFIG.getFields("SSalesProcesses")).isNotEmpty();
   }
 
   @Test

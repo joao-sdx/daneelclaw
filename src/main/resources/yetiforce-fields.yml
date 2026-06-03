@@ -1,125 +1,1384 @@
-# Field names are defaults for standard YetiForce installations.
-# Verify and adjust against your instance via Administration → Studio.
+---
 Leads:
-  - name: lastname
-    type: string
+  - name: "company"
+    type: "string"
     required: true
-    description: "Last name"
-  - name: firstname
-    type: string
-    required: false
-    description: "First name"
-  - name: company
-    type: string
-    required: false
-    description: "Company name"
-  - name: email
-    type: string
-    required: false
-    description: "Email address"
-  - name: phone
-    type: string
-    required: false
-    description: "Phone number"
-  - name: leadsource
-    type: string
-    required: false
-    description: "Lead source (e.g. Web, Cold Call, Partner)"
-  - name: description
-    type: string
-    required: false
-    description: "Notes or description"
-
-Accounts:
-  - name: accountname
-    type: string
+    daneel: true
+    description: "Lead name"
+  - name: "leadstatus"
+    type: "picklist"
     required: true
-    description: "Account/company name"
-  - name: website
-    type: string
+    daneel: true
+    description: "Lead status [Pending, In realization, Contact in the future, For conversion,\
+    \ Echec]"
+  - name: "assigned_user_id"
+    type: "owner"
+    required: true
+    daneel: true
+    description: "Assigned To [{1=Administrator Yeti (Board of Management), 7=Technical\
+    \ User No Allocation (Board of Management), 5=Technical User Web Service (Marketing\
+    \ Department), 6=Violante Joao (Board of Management)}, {}]"
+  - name: "shownerid"
+    type: "sharedOwner"
     required: false
-    description: "Website URL"
-  - name: phone
-    type: string
+    daneel: false
+    description: "Share with users: [{1=Administrator Yeti (Board of Management), 7=Technical\
+    \ User No Allocation (Board of Management), 5=Technical User Web Service (Marketing\
+    \ Department), 6=Violante Joao (Board of Management)}, {}]"
+  - name: "industry"
+    type: "picklist"
     required: false
-    description: "Main phone number"
-  - name: email1
-    type: string
+    daneel: true
+    description: "Industry [Administration, Construction Industry, Education, Power\
+    \ Industry, Finance, Trade, Hotels and Restaurants, Health Care, Industry/Manufacturing,\
+    \ Uniformed Services, Transport & Logistics, Technologies]"
+  - name: "subindustry"
+    type: "picklist"
     required: false
+    daneel: false
+    description: "Sub-branch [Ministry, Chancellery, Voivodeship Office, Marshal Office,\
+    \ Poviat, City/Township/District, Social Welfare Centre, Water and Sewerage Company,\
+    \ Voivodeship Job Centre, District Job Center, Court of justice, Attorney General's\
+    \ Office, Developers, Real Estate, Primary Schools, High Schools, Banking, Capital\
+    \ Market, Financial Services, Investments, Insurance, Retail, Wholesale, Resale,\
+    \ Automotive, Plastics, Chemical, Raw material, Fuel, Wood and paper, Electromechanical,\
+    \ Pharmaceutical, Building Materials, Metal, Light, Food industry, Recycling,\
+    \ Army, Police, Information Technology, Telecommunication, Media, Other]"
+  - name: "noofemployees"
+    type: "integer"
+    required: false
+    daneel: true
+    description: "Number of Employees"
+  - name: "leads_relation"
+    type: "picklist"
+    required: true
+    daneel: true
+    description: "Relation [B2C, B2B]"
+  - name: "was_read"
+    type: "boolean"
+    required: false
+    daneel: false
+    description: "Updated"
+  - name: "modifiedby"
+    type: "userCreator"
+    required: false
+    daneel: false
+    description: "Last modified by [{1=Administrator Yeti (Board of Management), 7=Technical\
+    \ User No Allocation (Board of Management), 5=Technical User Web Service (Marketing\
+    \ Department), 6=Violante Joao (Board of Management)}, {}]"
+  - name: "active"
+    type: "boolean"
+    required: false
+    daneel: true
+    description: "Active"
+  - name: "private"
+    type: "boolean"
+    required: false
+    daneel: false
+    description: "Private"
+  - name: "phone"
+    type: "phone"
+    required: false
+    daneel: true
+    description: "Primary phone"
+  - name: "email"
+    type: "email"
+    required: false
+    daneel: true
     description: "Primary email"
-  - name: industry
-    type: string
+  - name: "mobile"
+    type: "phone"
     required: false
-    description: "Industry sector"
-  - name: description
-    type: string
+    daneel: true
+    description: "Mobile phone"
+  - name: "secondaryemail"
+    type: "email"
     required: false
-    description: "Notes or description"
-
+    daneel: false
+    description: "Secondary email"
+  - name: "fax"
+    type: "phone"
+    required: false
+    daneel: false
+    description: "Fax"
+  - name: "website"
+    type: "url"
+    required: false
+    daneel: true
+    description: "Website"
+  - name: "noapprovalcalls"
+    type: "boolean"
+    required: false
+    daneel: false
+    description: "Permission to call"
+  - name: "noapprovalemails"
+    type: "boolean"
+    required: false
+    daneel: false
+    description: "Permission to send emails"
+  - name: "phone_extra"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Additional information"
+  - name: "mobile_extra"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Additional information"
+  - name: "fax_extra"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Additional information"
+  - name: "vat_id"
+    type: "string"
+    required: false
+    daneel: true
+    description: "VAT"
+  - name: "registration_number_1"
+    type: "string"
+    required: false
+    daneel: true
+    description: "NCR"
+  - name: "registration_number_2"
+    type: "string"
+    required: false
+    daneel: false
+    description: "TAX number"
+  - name: "legal_form"
+    type: "picklist"
+    required: false
+    daneel: false
+    description: "Legal form [Private individual, Company]"
+  - name: "annualrevenue"
+    type: "currency"
+    required: false
+    daneel: true
+    description: "Annual revenue"
+  - name: "leadsource"
+    type: "picklist"
+    required: false
+    daneel: true
+    description: "Lead source [Cold Call, Self generated, Conference, Trade show, Website,\
+    \ Word of mouth, Magento, Other]"
+  - name: "verification"
+    type: "multipicklist"
+    required: false
+    daneel: false
+    description: "Verification data [Address details, Contact details, Registration\
+    \ details]"
+  - name: "modifiedtime"
+    type: "datetime"
+    required: false
+    daneel: false
+    description: "Modified time"
+  - name: "lead_no"
+    type: "recordNumber"
+    required: false
+    daneel: false
+    description: "Lead number"
+  - name: "created_user_id"
+    type: "userCreator"
+    required: false
+    daneel: false
+    description: "Created by [{1=Administrator Yeti (Board of Management), 7=Technical\
+    \ User No Allocation (Board of Management), 5=Technical User Web Service (Marketing\
+    \ Department), 6=Violante Joao (Board of Management)}, {}]"
+  - name: "createdtime"
+    type: "datetime"
+    required: false
+    daneel: false
+    description: "Created time"
+  - name: "sum_time"
+    type: "totalTime"
+    required: false
+    daneel: false
+    description: "Total time [h]"
+  - name: "crmactivity"
+    type: "integer"
+    required: false
+    daneel: false
+    description: "Event"
+  - name: "addresslevel8a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Street"
+  - name: "localnumbera"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Office number"
+  - name: "addresslevel5a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "City/Village"
+  - name: "buildingnumbera"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Building number"
+  - name: "addresslevel7a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Post Code"
+  - name: "addresslevel6a"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Locality Region"
+  - name: "addresslevel2a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "State"
+  - name: "addresslevel4a"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Township"
+  - name: "addresslevel1a"
+    type: "country"
+    required: false
+    daneel: true
+    description: "Country [Afghanistan, Albania, Algeria, American Samoa, Andorra, Angola,\
+    \ Anguilla, Antarctica, Antigua & Barbuda, Argentina, Armenia, Aruba, Australia,\
+    \ Austria, Azerbaijan, Bahamas, Bahrain, Bangladesh, Barbados, Belarus, Belgium,\
+    \ Belize, Benin, Bermuda, Bhutan, Bolivia, Caribbean Netherlands, Bosnia & Herzegovina,\
+    \ Botswana, Bouvet Island, Brazil, British Indian Ocean Territory, Brunei, Bulgaria,\
+    \ Burkina Faso, Burundi, Cambodia, Cameroon, Canada, Cape Verde, Cayman Islands,\
+    \ Central African Republic, Chad, Chile, China, Christmas Island, Cocos (Keeling)\
+    \ Islands, Colombia, Comoros, Congo - Brazzaville, Congo - Kinshasa, Cook Islands,\
+    \ Costa Rica, Côte d’Ivoire, Croatia, Cuba, Curaçao, Cyprus, Czech Republic, Denmark,\
+    \ Djibouti, Dominica, Dominican Republic, East Timor, Ecuador, Egypt, El Salvador,\
+    \ Equatorial Guinea, Eritrea, Estonia, Ethiopia, Falkland Islands, Faroe Islands,\
+    \ Fiji, Finland, France, French Guiana, French Polynesia, French Southern Territories,\
+    \ Gabon, Gambia, Georgia, Germany, Ghana, Gibraltar, Greece, Greenland, Grenada,\
+    \ Guadeloupe, Guam, Guatemala, Guernsey, Guinea, Guinea-Bissau, Guyana, Haiti,\
+    \ Heard & McDonald Islands, Vatican City, Honduras, Hong Kong SAR China, Hungary,\
+    \ Iceland, India, Indonesia, Iran, Iraq, Ireland, Isle of Man, Israel, Italy,\
+    \ Jamaica, Japan, Jersey, Jordan, Kazakhstan, Kenya, Kiribati, North Korea, South\
+    \ Korea, Kosovo, Kuwait, Kyrgyzstan, Laos, Latvia, Lebanon, Lesotho, Liberia,\
+    \ Libya, Liechtenstein, Lithuania, Luxembourg, Macau SAR China, Macedonia, Madagascar,\
+    \ Malawi, Malaysia, Maldives, Mali, Malta, Marshall Islands, Martinique, Mauritania,\
+    \ Mauritius, Mayotte, Mexico, Micronesia, Moldova, Monaco, Mongolia, Montenegro,\
+    \ Montserrat, Morocco, Mozambique, Myanmar (Burma), Namibia, Nauru, Nepal, Netherlands,\
+    \ Netherlands Antilles, New Caledonia, New Zealand, Nicaragua, Niger, Nigeria,\
+    \ Niue, Norfolk Island, Northern Mariana Islands, Norway, Oman, Pakistan, Palau,\
+    \ Palestinian Territories, Panama, Papua New Guinea, Paraguay, Peru, Philippines,\
+    \ Pitcairn Islands, Poland, Portugal, Puerto Rico, Qatar, Réunion, Romania, Russia,\
+    \ Rwanda, St. Barthélemy, St. Helena, St. Kitts & Nevis, St. Lucia, St. Martin,\
+    \ St. Pierre & Miquelon, St. Vincent & Grenadines, Samoa, San Marino, São Tomé\
+    \ & Príncipe, Saudi Arabia, Senegal, Serbia, Seychelles, Sierra Leone, Singapore,\
+    \ Sint Maarten, Slovakia, Slovenia, Solomon Islands, Somalia, South Africa, South\
+    \ Georgia & South Sandwich Islands, South Sudan, Spain, Sri Lanka, Sudan, Suriname,\
+    \ Svalbard & Jan Mayen, Swaziland, Sweden, Switzerland, Syria, Taiwan, Tajikistan,\
+    \ Tanzania, Thailand, Timor-Leste, Togo, Tokelau, Tonga, Trinidad & Tobago, Tunisia,\
+    \ Turkey, Turkmenistan, Turks & Caicos Islands, Tuvalu, Uganda, Ukraine, United\
+    \ Arab Emirates, United Kingdom, United States, U.S. Outlying Islands, Uruguay,\
+    \ Uzbekistan, Vanuatu, Venezuela, Vietnam, British Virgin Islands, U.S. Virgin\
+    \ Islands, Wallis & Futuna, Western Sahara, Yemen, Zambia, Zimbabwe]"
+  - name: "addresslevel3a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "County"
+  - name: "poboxa"
+    type: "string"
+    required: false
+    daneel: true
+    description: "PO box"
+  - name: "description"
+    type: "text"
+    required: false
+    daneel: true
+    description: "Description"
+  - name: "attention"
+    type: "text"
+    required: false
+    daneel: true
+    description: "Notes"
+Accounts:
+  - name: "legal_form"
+    type: "picklist"
+    required: true
+    daneel: true
+    description: "Legal form [Private individual, Company]"
+  - name: "industry"
+    type: "picklist"
+    required: false
+    daneel: false
+    description: "Industry [Administration, Construction Industry, Education, Power\
+    \ Industry, Finance, Trade, Hotels and Restaurants, Health Care, Industry/Manufacturing,\
+    \ Uniformed Services, Transport & Logistics, Technologies]"
+  - name: "accountname"
+    type: "accountName"
+    required: true
+    daneel: true
+    description: "Account name"
+  - name: "accounts_status"
+    type: "picklist"
+    required: false
+    daneel: true
+    description: "Status [Promising client, Active client, Special client, Lost client,\
+    \ Unobtained client, Inactive client, Closed client, Blacklisted client]"
+  - name: "account_id"
+    type: "reference"
+    required: false
+    daneel: true
+    description: "Member of"
+  - name: "assigned_user_id"
+    type: "owner"
+    required: true
+    daneel: true
+    description: "Assigned To [{1=Administrator Yeti (Board of Management), 7=Technical\
+    \ User No Allocation (Board of Management), 5=Technical User Web Service (Marketing\
+    \ Department), 6=Violante Joao (Board of Management)}, {}]"
+  - name: "accounttype"
+    type: "picklist"
+    required: false
+    daneel: false
+    description: "Type [Analyst, Competitor, Customer, Integrator, Investor, Partner,\
+    \ Press, Prospect, Reseller, Other]"
+  - name: "shownerid"
+    type: "sharedOwner"
+    required: false
+    daneel: false
+    description: "Share with users: [{1=Administrator Yeti (Board of Management), 7=Technical\
+    \ User No Allocation (Board of Management), 5=Technical User Web Service (Marketing\
+    \ Department), 6=Violante Joao (Board of Management)}, {}]"
+  - name: "was_read"
+    type: "boolean"
+    required: false
+    daneel: false
+    description: "Updated"
+  - name: "private"
+    type: "boolean"
+    required: false
+    daneel: false
+    description: "Private"
+  - name: "modifiedby"
+    type: "userCreator"
+    required: false
+    daneel: false
+    description: "Last modified by [{1=Administrator Yeti (Board of Management), 7=Technical\
+    \ User No Allocation (Board of Management), 5=Technical User Web Service (Marketing\
+    \ Department), 6=Violante Joao (Board of Management)}, {}]"
+  - name: "account_short_name"
+    type: "string"
+    required: true
+    daneel: true
+    description: "Short name"
+  - name: "email1"
+    type: "email"
+    required: false
+    daneel: true
+    description: "Primary email"
+  - name: "phone"
+    type: "phone"
+    required: false
+    daneel: true
+    description: "Primary phone"
+  - name: "email2"
+    type: "email"
+    required: false
+    daneel: false
+    description: "Secondary email"
+  - name: "otherphone"
+    type: "phone"
+    required: false
+    daneel: true
+    description: "Secondary phone"
+  - name: "website"
+    type: "url"
+    required: false
+    daneel: true
+    description: "Web Site"
+  - name: "fax"
+    type: "phone"
+    required: false
+    daneel: false
+    description: "Fax"
+  - name: "emailoptout"
+    type: "boolean"
+    required: false
+    daneel: false
+    description: "Permission to send emails"
+  - name: "no_approval"
+    type: "boolean"
+    required: false
+    daneel: false
+    description: "Permission to call"
+  - name: "phone_extra"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Additional information"
+  - name: "fax_extra"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Additional information"
+  - name: "otherphone_extra"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Additional information"
+  - name: "balance"
+    type: "currency"
+    required: false
+    daneel: false
+    description: "Balance"
+  - name: "sum_time"
+    type: "totalTime"
+    required: false
+    daneel: false
+    description: "Total time [h]"
+  - name: "payment_balance"
+    type: "double"
+    required: false
+    daneel: false
+    description: "Payment balance"
+  - name: "inventorybalance"
+    type: "double"
+    required: false
+    daneel: false
+    description: "balance"
+  - name: "discount"
+    type: "percentage"
+    required: false
+    daneel: false
+    description: "Discount"
+  - name: "creditlimit"
+    type: "inventoryLimit"
+    required: false
+    daneel: false
+    description: "Merchant limit"
+  - name: "last_invoice_date"
+    type: "date"
+    required: false
+    daneel: false
+    description: "Last invoice date"
+  - name: "taxes"
+    type: "taxes"
+    required: false
+    daneel: false
+    description: "Taxes [VAT - 23.00%]"
+  - name: "isconvertedfromlead"
+    type: "boolean"
+    required: false
+    daneel: false
+    description: "Is converted from lead"
+  - name: "verification"
+    type: "multipicklist"
+    required: false
+    daneel: false
+    description: "Data verification [Address details, Contact details, Registration\
+    \ details]"
+  - name: "created_user_id"
+    type: "userCreator"
+    required: false
+    daneel: false
+    description: "Created by [{1=Administrator Yeti (Board of Management), 7=Technical\
+    \ User No Allocation (Board of Management), 5=Technical User Web Service (Marketing\
+    \ Department), 6=Violante Joao (Board of Management)}, {}]"
+  - name: "employees"
+    type: "integer"
+    required: false
+    daneel: true
+    description: "Employees"
+  - name: "createdtime"
+    type: "datetime"
+    required: false
+    daneel: false
+    description: "Created time"
+  - name: "modifiedtime"
+    type: "datetime"
+    required: false
+    daneel: false
+    description: "Modified time"
+  - name: "products"
+    type: "multiReferenceValue"
+    required: false
+    daneel: false
+    description: "Products"
+  - name: "services"
+    type: "multiReferenceValue"
+    required: false
+    daneel: false
+    description: "Services"
+  - name: "crmactivity"
+    type: "integer"
+    required: false
+    daneel: false
+    description: "Event"
+  - name: "account_no"
+    type: "recordNumber"
+    required: false
+    daneel: false
+    description: "Account number"
+  - name: "vat_id"
+    type: "string"
+    required: false
+    daneel: true
+    description: "VAT"
+  - name: "registration_number_2"
+    type: "string"
+    required: false
+    daneel: false
+    description: "TAX number"
+  - name: "annual_revenue"
+    type: "currency"
+    required: false
+    daneel: true
+    description: "Annual revenue"
+  - name: "registration_number_1"
+    type: "string"
+    required: false
+    daneel: true
+    description: "NCR"
+  - name: "siccode"
+    type: "string"
+    required: false
+    daneel: true
+    description: "SIC code"
+  - name: "addresslevel8a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Street"
+  - name: "localnumbera"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Office number"
+  - name: "addresslevel5a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "City/Village"
+  - name: "buildingnumbera"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Building number"
+  - name: "addresslevel7a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Post Code"
+  - name: "addresslevel6a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Locality Region"
+  - name: "addresslevel2a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "State"
+  - name: "addresslevel4a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Township"
+  - name: "addresslevel1a"
+    type: "country"
+    required: false
+    daneel: true
+    description: "Country [Afghanistan, Albania, Algeria, American Samoa, Andorra, Angola,\
+    \ Anguilla, Antarctica, Antigua & Barbuda, Argentina, Armenia, Aruba, Australia,\
+    \ Austria, Azerbaijan, Bahamas, Bahrain, Bangladesh, Barbados, Belarus, Belgium,\
+    \ Belize, Benin, Bermuda, Bhutan, Bolivia, Caribbean Netherlands, Bosnia & Herzegovina,\
+    \ Botswana, Bouvet Island, Brazil, British Indian Ocean Territory, Brunei, Bulgaria,\
+    \ Burkina Faso, Burundi, Cambodia, Cameroon, Canada, Cape Verde, Cayman Islands,\
+    \ Central African Republic, Chad, Chile, China, Christmas Island, Cocos (Keeling)\
+    \ Islands, Colombia, Comoros, Congo - Brazzaville, Congo - Kinshasa, Cook Islands,\
+    \ Costa Rica, Côte d’Ivoire, Croatia, Cuba, Curaçao, Cyprus, Czech Republic, Denmark,\
+    \ Djibouti, Dominica, Dominican Republic, East Timor, Ecuador, Egypt, El Salvador,\
+    \ Equatorial Guinea, Eritrea, Estonia, Ethiopia, Falkland Islands, Faroe Islands,\
+    \ Fiji, Finland, France, French Guiana, French Polynesia, French Southern Territories,\
+    \ Gabon, Gambia, Georgia, Germany, Ghana, Gibraltar, Greece, Greenland, Grenada,\
+    \ Guadeloupe, Guam, Guatemala, Guernsey, Guinea, Guinea-Bissau, Guyana, Haiti,\
+    \ Heard & McDonald Islands, Vatican City, Honduras, Hong Kong SAR China, Hungary,\
+    \ Iceland, India, Indonesia, Iran, Iraq, Ireland, Isle of Man, Israel, Italy,\
+    \ Jamaica, Japan, Jersey, Jordan, Kazakhstan, Kenya, Kiribati, North Korea, South\
+    \ Korea, Kosovo, Kuwait, Kyrgyzstan, Laos, Latvia, Lebanon, Lesotho, Liberia,\
+    \ Libya, Liechtenstein, Lithuania, Luxembourg, Macau SAR China, Macedonia, Madagascar,\
+    \ Malawi, Malaysia, Maldives, Mali, Malta, Marshall Islands, Martinique, Mauritania,\
+    \ Mauritius, Mayotte, Mexico, Micronesia, Moldova, Monaco, Mongolia, Montenegro,\
+    \ Montserrat, Morocco, Mozambique, Myanmar (Burma), Namibia, Nauru, Nepal, Netherlands,\
+    \ Netherlands Antilles, New Caledonia, New Zealand, Nicaragua, Niger, Nigeria,\
+    \ Niue, Norfolk Island, Northern Mariana Islands, Norway, Oman, Pakistan, Palau,\
+    \ Palestinian Territories, Panama, Papua New Guinea, Paraguay, Peru, Philippines,\
+    \ Pitcairn Islands, Poland, Portugal, Puerto Rico, Qatar, Réunion, Romania, Russia,\
+    \ Rwanda, St. Barthélemy, St. Helena, St. Kitts & Nevis, St. Lucia, St. Martin,\
+    \ St. Pierre & Miquelon, St. Vincent & Grenadines, Samoa, San Marino, São Tomé\
+    \ & Príncipe, Saudi Arabia, Senegal, Serbia, Seychelles, Sierra Leone, Singapore,\
+    \ Sint Maarten, Slovakia, Slovenia, Solomon Islands, Somalia, South Africa, South\
+    \ Georgia & South Sandwich Islands, South Sudan, Spain, Sri Lanka, Sudan, Suriname,\
+    \ Svalbard & Jan Mayen, Swaziland, Sweden, Switzerland, Syria, Taiwan, Tajikistan,\
+    \ Tanzania, Thailand, Timor-Leste, Togo, Tokelau, Tonga, Trinidad & Tobago, Tunisia,\
+    \ Turkey, Turkmenistan, Turks & Caicos Islands, Tuvalu, Uganda, Ukraine, United\
+    \ Arab Emirates, United Kingdom, United States, U.S. Outlying Islands, Uruguay,\
+    \ Uzbekistan, Vanuatu, Venezuela, Vietnam, British Virgin Islands, U.S. Virgin\
+    \ Islands, Wallis & Futuna, Western Sahara, Yemen, Zambia, Zimbabwe]"
+  - name: "addresslevel3a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "County"
+  - name: "poboxa"
+    type: "string"
+    required: false
+    daneel: true
+    description: "PO box"
+  - name: "addresslevel8b"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Street"
+  - name: "localnumberb"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Office number"
+  - name: "addresslevel5b"
+    type: "string"
+    required: false
+    daneel: false
+    description: "City/Village"
+  - name: "buildingnumberb"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Building number"
+  - name: "addresslevel7b"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Post Code"
+  - name: "addresslevel6b"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Locality Region"
+  - name: "addresslevel2b"
+    type: "string"
+    required: false
+    daneel: false
+    description: "State"
+  - name: "addresslevel4b"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Township"
+  - name: "addresslevel1b"
+    type: "country"
+    required: false
+    daneel: false
+    description: "Country [Afghanistan, Albania, Algeria, American Samoa, Andorra, Angola,\
+    \ Anguilla, Antarctica, Antigua & Barbuda, Argentina, Armenia, Aruba, Australia,\
+    \ Austria, Azerbaijan, Bahamas, Bahrain, Bangladesh, Barbados, Belarus, Belgium,\
+    \ Belize, Benin, Bermuda, Bhutan, Bolivia, Caribbean Netherlands, Bosnia & Herzegovina,\
+    \ Botswana, Bouvet Island, Brazil, British Indian Ocean Territory, Brunei, Bulgaria,\
+    \ Burkina Faso, Burundi, Cambodia, Cameroon, Canada, Cape Verde, Cayman Islands,\
+    \ Central African Republic, Chad, Chile, China, Christmas Island, Cocos (Keeling)\
+    \ Islands, Colombia, Comoros, Congo - Brazzaville, Congo - Kinshasa, Cook Islands,\
+    \ Costa Rica, Côte d’Ivoire, Croatia, Cuba, Curaçao, Cyprus, Czech Republic, Denmark,\
+    \ Djibouti, Dominica, Dominican Republic, East Timor, Ecuador, Egypt, El Salvador,\
+    \ Equatorial Guinea, Eritrea, Estonia, Ethiopia, Falkland Islands, Faroe Islands,\
+    \ Fiji, Finland, France, French Guiana, French Polynesia, French Southern Territories,\
+    \ Gabon, Gambia, Georgia, Germany, Ghana, Gibraltar, Greece, Greenland, Grenada,\
+    \ Guadeloupe, Guam, Guatemala, Guernsey, Guinea, Guinea-Bissau, Guyana, Haiti,\
+    \ Heard & McDonald Islands, Vatican City, Honduras, Hong Kong SAR China, Hungary,\
+    \ Iceland, India, Indonesia, Iran, Iraq, Ireland, Isle of Man, Israel, Italy,\
+    \ Jamaica, Japan, Jersey, Jordan, Kazakhstan, Kenya, Kiribati, North Korea, South\
+    \ Korea, Kosovo, Kuwait, Kyrgyzstan, Laos, Latvia, Lebanon, Lesotho, Liberia,\
+    \ Libya, Liechtenstein, Lithuania, Luxembourg, Macau SAR China, Macedonia, Madagascar,\
+    \ Malawi, Malaysia, Maldives, Mali, Malta, Marshall Islands, Martinique, Mauritania,\
+    \ Mauritius, Mayotte, Mexico, Micronesia, Moldova, Monaco, Mongolia, Montenegro,\
+    \ Montserrat, Morocco, Mozambique, Myanmar (Burma), Namibia, Nauru, Nepal, Netherlands,\
+    \ Netherlands Antilles, New Caledonia, New Zealand, Nicaragua, Niger, Nigeria,\
+    \ Niue, Norfolk Island, Northern Mariana Islands, Norway, Oman, Pakistan, Palau,\
+    \ Palestinian Territories, Panama, Papua New Guinea, Paraguay, Peru, Philippines,\
+    \ Pitcairn Islands, Poland, Portugal, Puerto Rico, Qatar, Réunion, Romania, Russia,\
+    \ Rwanda, St. Barthélemy, St. Helena, St. Kitts & Nevis, St. Lucia, St. Martin,\
+    \ St. Pierre & Miquelon, St. Vincent & Grenadines, Samoa, San Marino, São Tomé\
+    \ & Príncipe, Saudi Arabia, Senegal, Serbia, Seychelles, Sierra Leone, Singapore,\
+    \ Sint Maarten, Slovakia, Slovenia, Solomon Islands, Somalia, South Africa, South\
+    \ Georgia & South Sandwich Islands, South Sudan, Spain, Sri Lanka, Sudan, Suriname,\
+    \ Svalbard & Jan Mayen, Swaziland, Sweden, Switzerland, Syria, Taiwan, Tajikistan,\
+    \ Tanzania, Thailand, Timor-Leste, Togo, Tokelau, Tonga, Trinidad & Tobago, Tunisia,\
+    \ Turkey, Turkmenistan, Turks & Caicos Islands, Tuvalu, Uganda, Ukraine, United\
+    \ Arab Emirates, United Kingdom, United States, U.S. Outlying Islands, Uruguay,\
+    \ Uzbekistan, Vanuatu, Venezuela, Vietnam, British Virgin Islands, U.S. Virgin\
+    \ Islands, Wallis & Futuna, Western Sahara, Yemen, Zambia, Zimbabwe]"
+  - name: "addresslevel3b"
+    type: "string"
+    required: false
+    daneel: false
+    description: "County"
+  - name: "poboxb"
+    type: "string"
+    required: false
+    daneel: false
+    description: "PO box"
+  - name: "addresslevel8c"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Street"
+  - name: "localnumberc"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Office number"
+  - name: "addresslevel5c"
+    type: "string"
+    required: false
+    daneel: false
+    description: "City/Village"
+  - name: "buildingnumberc"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Building number"
+  - name: "addresslevel7c"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Post Code"
+  - name: "addresslevel6c"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Locality Region"
+  - name: "addresslevel2c"
+    type: "string"
+    required: false
+    daneel: false
+    description: "State"
+  - name: "addresslevel4c"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Township"
+  - name: "addresslevel1c"
+    type: "country"
+    required: false
+    daneel: false
+    description: "Country [Afghanistan, Albania, Algeria, American Samoa, Andorra, Angola,\
+    \ Anguilla, Antarctica, Antigua & Barbuda, Argentina, Armenia, Aruba, Australia,\
+    \ Austria, Azerbaijan, Bahamas, Bahrain, Bangladesh, Barbados, Belarus, Belgium,\
+    \ Belize, Benin, Bermuda, Bhutan, Bolivia, Caribbean Netherlands, Bosnia & Herzegovina,\
+    \ Botswana, Bouvet Island, Brazil, British Indian Ocean Territory, Brunei, Bulgaria,\
+    \ Burkina Faso, Burundi, Cambodia, Cameroon, Canada, Cape Verde, Cayman Islands,\
+    \ Central African Republic, Chad, Chile, China, Christmas Island, Cocos (Keeling)\
+    \ Islands, Colombia, Comoros, Congo - Brazzaville, Congo - Kinshasa, Cook Islands,\
+    \ Costa Rica, Côte d’Ivoire, Croatia, Cuba, Curaçao, Cyprus, Czech Republic, Denmark,\
+    \ Djibouti, Dominica, Dominican Republic, East Timor, Ecuador, Egypt, El Salvador,\
+    \ Equatorial Guinea, Eritrea, Estonia, Ethiopia, Falkland Islands, Faroe Islands,\
+    \ Fiji, Finland, France, French Guiana, French Polynesia, French Southern Territories,\
+    \ Gabon, Gambia, Georgia, Germany, Ghana, Gibraltar, Greece, Greenland, Grenada,\
+    \ Guadeloupe, Guam, Guatemala, Guernsey, Guinea, Guinea-Bissau, Guyana, Haiti,\
+    \ Heard & McDonald Islands, Vatican City, Honduras, Hong Kong SAR China, Hungary,\
+    \ Iceland, India, Indonesia, Iran, Iraq, Ireland, Isle of Man, Israel, Italy,\
+    \ Jamaica, Japan, Jersey, Jordan, Kazakhstan, Kenya, Kiribati, North Korea, South\
+    \ Korea, Kosovo, Kuwait, Kyrgyzstan, Laos, Latvia, Lebanon, Lesotho, Liberia,\
+    \ Libya, Liechtenstein, Lithuania, Luxembourg, Macau SAR China, Macedonia, Madagascar,\
+    \ Malawi, Malaysia, Maldives, Mali, Malta, Marshall Islands, Martinique, Mauritania,\
+    \ Mauritius, Mayotte, Mexico, Micronesia, Moldova, Monaco, Mongolia, Montenegro,\
+    \ Montserrat, Morocco, Mozambique, Myanmar (Burma), Namibia, Nauru, Nepal, Netherlands,\
+    \ Netherlands Antilles, New Caledonia, New Zealand, Nicaragua, Niger, Nigeria,\
+    \ Niue, Norfolk Island, Northern Mariana Islands, Norway, Oman, Pakistan, Palau,\
+    \ Palestinian Territories, Panama, Papua New Guinea, Paraguay, Peru, Philippines,\
+    \ Pitcairn Islands, Poland, Portugal, Puerto Rico, Qatar, Réunion, Romania, Russia,\
+    \ Rwanda, St. Barthélemy, St. Helena, St. Kitts & Nevis, St. Lucia, St. Martin,\
+    \ St. Pierre & Miquelon, St. Vincent & Grenadines, Samoa, San Marino, São Tomé\
+    \ & Príncipe, Saudi Arabia, Senegal, Serbia, Seychelles, Sierra Leone, Singapore,\
+    \ Sint Maarten, Slovakia, Slovenia, Solomon Islands, Somalia, South Africa, South\
+    \ Georgia & South Sandwich Islands, South Sudan, Spain, Sri Lanka, Sudan, Suriname,\
+    \ Svalbard & Jan Mayen, Swaziland, Sweden, Switzerland, Syria, Taiwan, Tajikistan,\
+    \ Tanzania, Thailand, Timor-Leste, Togo, Tokelau, Tonga, Trinidad & Tobago, Tunisia,\
+    \ Turkey, Turkmenistan, Turks & Caicos Islands, Tuvalu, Uganda, Ukraine, United\
+    \ Arab Emirates, United Kingdom, United States, U.S. Outlying Islands, Uruguay,\
+    \ Uzbekistan, Vanuatu, Venezuela, Vietnam, British Virgin Islands, U.S. Virgin\
+    \ Islands, Wallis & Futuna, Western Sahara, Yemen, Zambia, Zimbabwe]"
+  - name: "addresslevel3c"
+    type: "string"
+    required: false
+    daneel: false
+    description: "County"
+  - name: "poboxc"
+    type: "string"
+    required: false
+    daneel: false
+    description: "PO box"
+  - name: "description"
+    type: "text"
+    required: false
+    daneel: true
+    description: "Description"
+  - name: "attention"
+    type: "text"
+    required: false
+    daneel: true
+    description: "Comments"
+  - name: "check_stock_levels"
+    type: "boolean"
+    required: false
+    daneel: false
+    description: "Check stock levels"
+  - name: "pricebook_id"
+    type: "reference"
+    required: false
+    daneel: false
+    description: "Pricebook"
+  - name: "sum_open_orders"
+    type: "currency"
+    required: false
+    daneel: false
+    description: "Sum of open sales orders"
+  - name: "accounts_available_taxes"
+    type: "multipicklist"
+    required: false
+    daneel: false
+    description: "Available taxes [Regional tax, Group tax]"
 Contacts:
-  - name: lastname
-    type: string
-    required: true
-    description: "Last name"
-  - name: firstname
-    type: string
+  - name: "salutationtype"
+    type: "picklist"
     required: false
+    daneel: true
+    description: "Salutation [Mr., Ms., Mrs., Dr., Prof.]"
+  - name: "firstname"
+    type: "string"
+    required: false
+    daneel: true
     description: "First name"
-  - name: email
-    type: string
+  - name: "contact_no"
+    type: "recordNumber"
     required: false
-    description: "Email address"
-  - name: phone
-    type: string
-    required: false
-    description: "Phone number"
-  - name: title
-    type: string
-    required: false
-    description: "Job title"
-  - name: department
-    type: string
-    required: false
-    description: "Department"
-  - name: account_id
-    type: string
-    required: false
-    description: "ID of the related Account record"
-  - name: description
-    type: string
-    required: false
-    description: "Notes or description"
-
-SalesProcesses:
-  - name: subject
-    type: string
+    daneel: false
+    description: "Contact ID"
+  - name: "lastname"
+    type: "string"
     required: true
-    description: "Process subject/title"
-  - name: closingdate
-    type: string
+    daneel: true
+    description: "Last name"
+  - name: "parent_id"
+    type: "reference"
     required: false
-    description: "Expected closing date (YYYY-MM-DD)"
-  - name: amount
-    type: string
+    daneel: true
+    description: "Member of"
+  - name: "leadsource"
+    type: "picklist"
     required: false
-    description: "Deal amount"
-  - name: sales_stage
-    type: string
+    daneel: false
+    description: "Lead source [Cold Call, Self generated, Conference, Trade show, Website,\
+    \ Word of mouth, Magento, Other]"
+  - name: "assigned_user_id"
+    type: "owner"
+    required: true
+    daneel: true
+    description: "Assigned To [{1=Administrator Yeti (Board of Management), 7=Technical\
+    \ User No Allocation (Board of Management), 5=Technical User Web Service (Marketing\
+    \ Department), 6=Violante Joao (Board of Management)}, {}]"
+  - name: "contactstatus"
+    type: "picklist"
     required: false
-    description: "Stage (e.g. Prospecting, Proposal, Closed Won)"
-  - name: probability
-    type: string
+    daneel: true
+    description: "Status [Active, Inactive]"
+  - name: "shownerid"
+    type: "sharedOwner"
     required: false
-    description: "Win probability percentage (0-100)"
-  - name: account_id
-    type: string
+    daneel: false
+    description: "Share with users: [{1=Administrator Yeti (Board of Management), 7=Technical\
+    \ User No Allocation (Board of Management), 5=Technical User Web Service (Marketing\
+    \ Department), 6=Violante Joao (Board of Management)}, {}]"
+  - name: "jobtitle"
+    type: "string"
     required: false
-    description: "ID of the related Account record"
-  - name: contact_id
-    type: string
+    daneel: true
+    description: "Job title"
+  - name: "was_read"
+    type: "boolean"
     required: false
-    description: "ID of the related Contact record"
-  - name: description
-    type: string
+    daneel: false
+    description: "Updated"
+  - name: "modifiedby"
+    type: "userCreator"
     required: false
-    description: "Notes or description"
+    daneel: false
+    description: "Last modified by [{1=Administrator Yeti (Board of Management), 7=Technical\
+    \ User No Allocation (Board of Management), 5=Technical User Web Service (Marketing\
+    \ Department), 6=Violante Joao (Board of Management)}, {}]"
+  - name: "private"
+    type: "boolean"
+    required: false
+    daneel: false
+    description: "Private"
+  - name: "gender"
+    type: "picklist"
+    required: false
+    daneel: false
+    description: "Gender [Woman, Man]"
+  - name: "phone"
+    type: "phone"
+    required: false
+    daneel: true
+    description: "Office phone"
+  - name: "email"
+    type: "email"
+    required: false
+    daneel: true
+    description: "Primary email"
+  - name: "mobile"
+    type: "phone"
+    required: false
+    daneel: true
+    description: "Mobile phone"
+  - name: "secondary_email"
+    type: "email"
+    required: false
+    daneel: false
+    description: "Secondary email"
+  - name: "donotcall"
+    type: "boolean"
+    required: false
+    daneel: false
+    description: "Permission to call"
+  - name: "emailoptout"
+    type: "boolean"
+    required: false
+    daneel: false
+    description: "Permission to send emails"
+  - name: "phone_extra"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Additional information"
+  - name: "mobile_extra"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Additional information"
+  - name: "birthday"
+    type: "date"
+    required: false
+    daneel: false
+    description: "Date of birth"
+  - name: "contact_id"
+    type: "reference"
+    required: false
+    daneel: true
+    description: "Parent Contact"
+  - name: "verification"
+    type: "multipicklist"
+    required: false
+    daneel: false
+    description: "Data verification [Address details, Contact details, Registration\
+    \ details]"
+  - name: "created_user_id"
+    type: "userCreator"
+    required: false
+    daneel: false
+    description: "Created by [{1=Administrator Yeti (Board of Management), 7=Technical\
+    \ User No Allocation (Board of Management), 5=Technical User Web Service (Marketing\
+    \ Department), 6=Violante Joao (Board of Management)}, {}]"
+  - name: "isconvertedfromlead"
+    type: "boolean"
+    required: false
+    daneel: false
+    description: "Is converted from lead"
+  - name: "modifiedtime"
+    type: "datetime"
+    required: false
+    daneel: false
+    description: "Modified time"
+  - name: "createdtime"
+    type: "datetime"
+    required: false
+    daneel: false
+    description: "Created time"
+  - name: "decision_maker"
+    type: "boolean"
+    required: false
+    daneel: true
+    description: "Decision maker"
+  - name: "sum_time"
+    type: "totalTime"
+    required: false
+    daneel: false
+    description: "Total time [h]"
+  - name: "crmactivity"
+    type: "integer"
+    required: false
+    daneel: false
+    description: "Event"
+  - name: "approvals"
+    type: "multiReference"
+    required: false
+    daneel: false
+    description: "Approvals"
+  - name: "notifilanguage"
+    type: "languages"
+    required: false
+    daneel: true
+    description: "Language notifications [English (United States), Français]"
+  - name: "portal"
+    type: "boolean"
+    required: false
+    daneel: true
+    description: "Portal user"
+  - name: "addresslevel8a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Street"
+  - name: "localnumbera"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Office number"
+  - name: "addresslevel5a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "City/Village"
+  - name: "buildingnumbera"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Building number"
+  - name: "addresslevel7a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Post Code"
+  - name: "addresslevel6a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Locality Region"
+  - name: "addresslevel2a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "State"
+  - name: "addresslevel4a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "Township"
+  - name: "addresslevel1a"
+    type: "country"
+    required: false
+    daneel: true
+    description: "Country [Afghanistan, Albania, Algeria, American Samoa, Andorra, Angola,\
+    \ Anguilla, Antarctica, Antigua & Barbuda, Argentina, Armenia, Aruba, Australia,\
+    \ Austria, Azerbaijan, Bahamas, Bahrain, Bangladesh, Barbados, Belarus, Belgium,\
+    \ Belize, Benin, Bermuda, Bhutan, Bolivia, Caribbean Netherlands, Bosnia & Herzegovina,\
+    \ Botswana, Bouvet Island, Brazil, British Indian Ocean Territory, Brunei, Bulgaria,\
+    \ Burkina Faso, Burundi, Cambodia, Cameroon, Canada, Cape Verde, Cayman Islands,\
+    \ Central African Republic, Chad, Chile, China, Christmas Island, Cocos (Keeling)\
+    \ Islands, Colombia, Comoros, Congo - Brazzaville, Congo - Kinshasa, Cook Islands,\
+    \ Costa Rica, Côte d’Ivoire, Croatia, Cuba, Curaçao, Cyprus, Czech Republic, Denmark,\
+    \ Djibouti, Dominica, Dominican Republic, East Timor, Ecuador, Egypt, El Salvador,\
+    \ Equatorial Guinea, Eritrea, Estonia, Ethiopia, Falkland Islands, Faroe Islands,\
+    \ Fiji, Finland, France, French Guiana, French Polynesia, French Southern Territories,\
+    \ Gabon, Gambia, Georgia, Germany, Ghana, Gibraltar, Greece, Greenland, Grenada,\
+    \ Guadeloupe, Guam, Guatemala, Guernsey, Guinea, Guinea-Bissau, Guyana, Haiti,\
+    \ Heard & McDonald Islands, Vatican City, Honduras, Hong Kong SAR China, Hungary,\
+    \ Iceland, India, Indonesia, Iran, Iraq, Ireland, Isle of Man, Israel, Italy,\
+    \ Jamaica, Japan, Jersey, Jordan, Kazakhstan, Kenya, Kiribati, North Korea, South\
+    \ Korea, Kosovo, Kuwait, Kyrgyzstan, Laos, Latvia, Lebanon, Lesotho, Liberia,\
+    \ Libya, Liechtenstein, Lithuania, Luxembourg, Macau SAR China, Macedonia, Madagascar,\
+    \ Malawi, Malaysia, Maldives, Mali, Malta, Marshall Islands, Martinique, Mauritania,\
+    \ Mauritius, Mayotte, Mexico, Micronesia, Moldova, Monaco, Mongolia, Montenegro,\
+    \ Montserrat, Morocco, Mozambique, Myanmar (Burma), Namibia, Nauru, Nepal, Netherlands,\
+    \ Netherlands Antilles, New Caledonia, New Zealand, Nicaragua, Niger, Nigeria,\
+    \ Niue, Norfolk Island, Northern Mariana Islands, Norway, Oman, Pakistan, Palau,\
+    \ Palestinian Territories, Panama, Papua New Guinea, Paraguay, Peru, Philippines,\
+    \ Pitcairn Islands, Poland, Portugal, Puerto Rico, Qatar, Réunion, Romania, Russia,\
+    \ Rwanda, St. Barthélemy, St. Helena, St. Kitts & Nevis, St. Lucia, St. Martin,\
+    \ St. Pierre & Miquelon, St. Vincent & Grenadines, Samoa, San Marino, São Tomé\
+    \ & Príncipe, Saudi Arabia, Senegal, Serbia, Seychelles, Sierra Leone, Singapore,\
+    \ Sint Maarten, Slovakia, Slovenia, Solomon Islands, Somalia, South Africa, South\
+    \ Georgia & South Sandwich Islands, South Sudan, Spain, Sri Lanka, Sudan, Suriname,\
+    \ Svalbard & Jan Mayen, Swaziland, Sweden, Switzerland, Syria, Taiwan, Tajikistan,\
+    \ Tanzania, Thailand, Timor-Leste, Togo, Tokelau, Tonga, Trinidad & Tobago, Tunisia,\
+    \ Turkey, Turkmenistan, Turks & Caicos Islands, Tuvalu, Uganda, Ukraine, United\
+    \ Arab Emirates, United Kingdom, United States, U.S. Outlying Islands, Uruguay,\
+    \ Uzbekistan, Vanuatu, Venezuela, Vietnam, British Virgin Islands, U.S. Virgin\
+    \ Islands, Wallis & Futuna, Western Sahara, Yemen, Zambia, Zimbabwe]"
+  - name: "addresslevel3a"
+    type: "string"
+    required: false
+    daneel: true
+    description: "County"
+  - name: "poboxa"
+    type: "string"
+    required: false
+    daneel: true
+    description: "PO box"
+  - name: "addresslevel8b"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Street"
+  - name: "localnumberb"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Office number"
+  - name: "addresslevel5b"
+    type: "string"
+    required: false
+    daneel: false
+    description: "City/Village"
+  - name: "buildingnumberb"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Building number"
+  - name: "addresslevel7b"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Post Code"
+  - name: "addresslevel6b"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Locality Region"
+  - name: "addresslevel2b"
+    type: "string"
+    required: false
+    daneel: false
+    description: "State"
+  - name: "addresslevel4b"
+    type: "string"
+    required: false
+    daneel: false
+    description: "Township"
+  - name: "addresslevel1b"
+    type: "country"
+    required: false
+    daneel: false
+    description: "Country [Afghanistan, Albania, Algeria, American Samoa, Andorra, Angola,\
+    \ Anguilla, Antarctica, Antigua & Barbuda, Argentina, Armenia, Aruba, Australia,\
+    \ Austria, Azerbaijan, Bahamas, Bahrain, Bangladesh, Barbados, Belarus, Belgium,\
+    \ Belize, Benin, Bermuda, Bhutan, Bolivia, Caribbean Netherlands, Bosnia & Herzegovina,\
+    \ Botswana, Bouvet Island, Brazil, British Indian Ocean Territory, Brunei, Bulgaria,\
+    \ Burkina Faso, Burundi, Cambodia, Cameroon, Canada, Cape Verde, Cayman Islands,\
+    \ Central African Republic, Chad, Chile, China, Christmas Island, Cocos (Keeling)\
+    \ Islands, Colombia, Comoros, Congo - Brazzaville, Congo - Kinshasa, Cook Islands,\
+    \ Costa Rica, Côte d’Ivoire, Croatia, Cuba, Curaçao, Cyprus, Czech Republic, Denmark,\
+    \ Djibouti, Dominica, Dominican Republic, East Timor, Ecuador, Egypt, El Salvador,\
+    \ Equatorial Guinea, Eritrea, Estonia, Ethiopia, Falkland Islands, Faroe Islands,\
+    \ Fiji, Finland, France, French Guiana, French Polynesia, French Southern Territories,\
+    \ Gabon, Gambia, Georgia, Germany, Ghana, Gibraltar, Greece, Greenland, Grenada,\
+    \ Guadeloupe, Guam, Guatemala, Guernsey, Guinea, Guinea-Bissau, Guyana, Haiti,\
+    \ Heard & McDonald Islands, Vatican City, Honduras, Hong Kong SAR China, Hungary,\
+    \ Iceland, India, Indonesia, Iran, Iraq, Ireland, Isle of Man, Israel, Italy,\
+    \ Jamaica, Japan, Jersey, Jordan, Kazakhstan, Kenya, Kiribati, North Korea, South\
+    \ Korea, Kosovo, Kuwait, Kyrgyzstan, Laos, Latvia, Lebanon, Lesotho, Liberia,\
+    \ Libya, Liechtenstein, Lithuania, Luxembourg, Macau SAR China, Macedonia, Madagascar,\
+    \ Malawi, Malaysia, Maldives, Mali, Malta, Marshall Islands, Martinique, Mauritania,\
+    \ Mauritius, Mayotte, Mexico, Micronesia, Moldova, Monaco, Mongolia, Montenegro,\
+    \ Montserrat, Morocco, Mozambique, Myanmar (Burma), Namibia, Nauru, Nepal, Netherlands,\
+    \ Netherlands Antilles, New Caledonia, New Zealand, Nicaragua, Niger, Nigeria,\
+    \ Niue, Norfolk Island, Northern Mariana Islands, Norway, Oman, Pakistan, Palau,\
+    \ Palestinian Territories, Panama, Papua New Guinea, Paraguay, Peru, Philippines,\
+    \ Pitcairn Islands, Poland, Portugal, Puerto Rico, Qatar, Réunion, Romania, Russia,\
+    \ Rwanda, St. Barthélemy, St. Helena, St. Kitts & Nevis, St. Lucia, St. Martin,\
+    \ St. Pierre & Miquelon, St. Vincent & Grenadines, Samoa, San Marino, São Tomé\
+    \ & Príncipe, Saudi Arabia, Senegal, Serbia, Seychelles, Sierra Leone, Singapore,\
+    \ Sint Maarten, Slovakia, Slovenia, Solomon Islands, Somalia, South Africa, South\
+    \ Georgia & South Sandwich Islands, South Sudan, Spain, Sri Lanka, Sudan, Suriname,\
+    \ Svalbard & Jan Mayen, Swaziland, Sweden, Switzerland, Syria, Taiwan, Tajikistan,\
+    \ Tanzania, Thailand, Timor-Leste, Togo, Tokelau, Tonga, Trinidad & Tobago, Tunisia,\
+    \ Turkey, Turkmenistan, Turks & Caicos Islands, Tuvalu, Uganda, Ukraine, United\
+    \ Arab Emirates, United Kingdom, United States, U.S. Outlying Islands, Uruguay,\
+    \ Uzbekistan, Vanuatu, Venezuela, Vietnam, British Virgin Islands, U.S. Virgin\
+    \ Islands, Wallis & Futuna, Western Sahara, Yemen, Zambia, Zimbabwe]"
+  - name: "addresslevel3b"
+    type: "string"
+    required: false
+    daneel: false
+    description: "County"
+  - name: "poboxb"
+    type: "string"
+    required: false
+    daneel: false
+    description: "PO box"
+  - name: "description"
+    type: "text"
+    required: false
+    daneel: true
+    description: "Description"
+  - name: "attention"
+    type: "text"
+    required: false
+    daneel: true
+    description: "Comments"
+  - name: "imagename"
+    type: "image"
+    required: false
+    daneel: false
+    description: "Contact image"
+SSalesProcesses:
+  - name: "subject"
+    type: "string"
+    required: true
+    daneel: true
+    description: "Subject"
+  - name: "related_to"
+    type: "reference"
+    required: true
+    daneel: true
+    description: "Account"
+  - name: "assigned_user_id"
+    type: "owner"
+    required: true
+    daneel: true
+    description: "Assigned To [{1=Administrator Yeti (Board of Management), 7=Technical\
+    \ User No Allocation (Board of Management), 5=Technical User Web Service (Marketing\
+    \ Department), 6=Violante Joao (Board of Management)}, {}]"
+  - name: "parentid"
+    type: "reference"
+    required: false
+    daneel: true
+    description: "Parent Sales Opportunity"
+  - name: "shownerid"
+    type: "sharedOwner"
+    required: false
+    daneel: false
+    description: "Share with users: [{1=Administrator Yeti (Board of Management), 7=Technical\
+    \ User No Allocation (Board of Management), 5=Technical User Web Service (Marketing\
+    \ Department), 6=Violante Joao (Board of Management)}, {}]"
+  - name: "category"
+    type: "tree"
+    required: false
+    daneel: false
+    description: "Category [None]"
+  - name: "ssalesprocesses_type"
+    type: "picklist"
+    required: true
+    daneel: true
+    description: "Type [New sales, Renewal, Aftersales, Tender]"
+  - name: "ssalesprocesses_source"
+    type: "picklist"
+    required: false
+    daneel: false
+    description: "Source [Website, Phone, Mail campaign, Conference, Recommendation,\
+    \ Meeting, Advertising, Community, Other]"
+  - name: "probability"
+    type: "percentage"
+    required: false
+    daneel: true
+    description: "Probability"
+  - name: "ssalesprocesses_status"
+    type: "picklist"
+    required: false
+    daneel: true
+    description: "Status [Draft, For realization, Quote enquiry, Requirements Card,\
+    \ Calculation, Quote, Negotiations, Awaiting decision, Awaiting signatures, Order,\
+    \ Realization, Awaiting payment, Invoicing, Sale completed, Sale failed, Sale\
+    \ cancelled]"
+  - name: "startdate"
+    type: "date"
+    required: false
+    daneel: true
+    description: "Start date"
+  - name: "estimated_date"
+    type: "date"
+    required: true
+    daneel: true
+    description: "Estimated date"
+  - name: "actual_date"
+    type: "date"
+    required: false
+    daneel: true
+    description: "Actual date"
+  - name: "private"
+    type: "boolean"
+    required: false
+    daneel: false
+    description: "Private"
+  - name: "campaignid"
+    type: "reference"
+    required: false
+    daneel: true
+    description: "Marketing campaign"
+  - name: "created_user_id"
+    type: "userCreator"
+    required: false
+    daneel: false
+    description: "Created by [{1=Administrator Yeti (Board of Management), 7=Technical\
+    \ User No Allocation (Board of Management), 5=Technical User Web Service (Marketing\
+    \ Department), 6=Violante Joao (Board of Management)}, {}]"
+  - name: "createdtime"
+    type: "datetime"
+    required: false
+    daneel: false
+    description: "Created time"
+  - name: "ssalesprocesses_no"
+    type: "recordNumber"
+    required: false
+    daneel: false
+    description: "Number"
+  - name: "modifiedtime"
+    type: "datetime"
+    required: false
+    daneel: false
+    description: "Modified time"
+  - name: "sum_time"
+    type: "totalTime"
+    required: false
+    daneel: false
+    description: "Total time [h]"
+  - name: "crmactivity"
+    type: "integer"
+    required: false
+    daneel: false
+    description: "Event"
+  - name: "estimated"
+    type: "currency"
+    required: true
+    daneel: true
+    description: "Estimated value"
+  - name: "actual_sale"
+    type: "currency"
+    required: false
+    daneel: true
+    description: "Actual sale"
+  - name: "estimated_margin"
+    type: "currency"
+    required: false
+    daneel: false
+    description: "Estimated margin"
+  - name: "expected_margin"
+    type: "currency"
+    required: false
+    daneel: false
+    description: "Expected margin"
+  - name: "expected_sale"
+    type: "currency"
+    required: false
+    daneel: false
+    description: "Expected sale"
+  - name: "description"
+    type: "text"
+    required: false
+    daneel: true
+    description: "Description"
+  - name: "attention"
+    type: "text"
+    required: false
+    daneel: true
+    description: "Comments"

@@ -28,6 +28,6 @@ public class YetiForceFieldsConfig {
   }
 
   public List<YetiForceField> getFields(String module) {
-    return fields.getOrDefault(module, List.of());
+    return fields.getOrDefault(module, List.of()).stream().filter(YetiForceField::daneel).toList();
   }
 }

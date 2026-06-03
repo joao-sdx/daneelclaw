@@ -26,7 +26,7 @@ public class SalesProcessListTool implements DaneelToolInterface {
 
   @Override
   public String description() {
-    return "Lists SalesProcesses records from YetiForce CRM. "
+    return "Lists SSalesProcesses records from YetiForce CRM. "
         + "Supports optional JSON conditions filter, limit, and offset for pagination. "
         + "Returns a JSON array of records.";
   }
@@ -50,7 +50,7 @@ public class SalesProcessListTool implements DaneelToolInterface {
     var limit = parseIntOrDefault(params.get("limit"), 20);
     var offset = parseIntOrDefault(params.get("offset"), 0);
     try {
-      var records = client.listRecords("SalesProcesses", conditions, limit, offset);
+      var records = client.listRecords("SSalesProcesses", conditions, limit, offset);
       log.info("yetiforce_sales_process_list count={}", records.size());
       return objectMapper.writeValueAsString(records);
     } catch (Exception e) {

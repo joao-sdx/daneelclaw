@@ -116,6 +116,20 @@ class YetiForceCrmClientTest {
   }
 
   @Test
+  void getFields_returnsResultMap() throws Exception {
+    var r1 = loginOk("tok1");
+    var r2 =
+        ok(
+            "{\"status\":1,\"result\":{\"fields\":[{\"name\":\"lastname\",\"label\":\"Last Name\","
+                + "\"mandatory\":true}]}}");
+    doReturn(r1).doReturn(r2).when(httpClient).send(any(), any());
+
+    var result = client.getFields("Leads");
+
+    assertThat(result).containsKey("fields");
+  }
+
+  @Test
   void deleteRecord_sendsDeleteRequest() throws Exception {
     var r1 = loginOk("tok1");
     var r2 = ok("{\"status\":1}");

@@ -76,7 +76,7 @@ Implemented tools: `TaskCreateTool`, `TaskUpdateTool`, `TaskDeleteTool`, `TaskLi
 - `daneel.tools.yetiforce.api-key` — set via `YETIFORCE_API_KEY` env var; the X-API-KEY from Integration → Web service - Applications
 - `daneel.tools.yetiforce.user` — set via `YETIFORCE_USER` env var; WebserviceStandard username
 - `daneel.tools.yetiforce.password` — set via `YETIFORCE_PASSWORD` env var; WebserviceStandard password
-- `src/main/resources/yetiforce-fields.yml` — field definitions per module (Leads, Accounts, Contacts, SalesProcesses); edit to match your YetiForce instance's actual field names
+- `src/main/resources/yetiforce-fields.yml` — field definitions per module (Leads, Accounts, Contacts, SSalesProcesses); edit to match your YetiForce instance's actual field names
 - `daneel.tools.select.enabled` — run a dedicated SLM call before each user turn to select relevant tools (default `true`; set to `false` to revert to sending all tools on every request)
 - `daneel.tools.select.history-window` — number of recent messages passed to the tool selector for context (default `4`)
 - `daneel.tools.errors.ttl-ms` — how long tool errors are kept in the store before TTL sweep removes them (default 300000 = 5 min)

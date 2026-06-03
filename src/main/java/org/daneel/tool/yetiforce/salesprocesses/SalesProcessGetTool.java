@@ -25,7 +25,7 @@ public class SalesProcessGetTool implements DaneelToolInterface {
 
   @Override
   public String description() {
-    return "Gets a single SalesProcesses record from YetiForce CRM by its ID. Returns full record as JSON.";
+    return "Gets a single SSalesProcesses record from YetiForce CRM by its ID. Returns full record as JSON.";
   }
 
   @Override
@@ -40,7 +40,7 @@ public class SalesProcessGetTool implements DaneelToolInterface {
       return "Error: id is required";
     }
     try {
-      var record = client.getRecord("SalesProcesses", id.toString());
+      var record = client.getRecord("SSalesProcesses", id.toString());
       log.info("yetiforce_sales_process_get id={}", id);
       return objectMapper.writeValueAsString(record);
     } catch (Exception e) {

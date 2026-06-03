@@ -23,7 +23,7 @@ public class SalesProcessDeleteTool implements DaneelToolInterface {
 
   @Override
   public String description() {
-    return "Deletes a SalesProcesses record from YetiForce CRM (moves it to trash). "
+    return "Deletes a SSalesProcesses record from YetiForce CRM (moves it to trash). "
         + "Returns {\"success\": true} on success.";
   }
 
@@ -39,7 +39,7 @@ public class SalesProcessDeleteTool implements DaneelToolInterface {
       return "Error: id is required";
     }
     try {
-      client.deleteRecord("SalesProcesses", id.toString());
+      client.deleteRecord("SSalesProcesses", id.toString());
       log.info("yetiforce_sales_process_delete id={}", id);
       return "{\"success\": true}";
     } catch (Exception e) {

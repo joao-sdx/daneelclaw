@@ -3,6 +3,28 @@ version: '3'
 dotenv: [ '.env' ]
 
 tasks:
+  yf:dump-fields:
+    desc: "Fetch field definitions for each YetiForce module via the dictionary endpoint"
+    vars:
+      BASIC_AUTH:
+        sh: printf '%s:%s' "{{.YETIFORCE_APP_NAME}}" "{{.YETIFORCE_APP_PASS}}" | base64
+      TOKEN:
+        sh: >
+          http --ignore-stdin --verify=no -b
+          POST "{{.YETIFORCE_URL}}/webservice/WebserviceStandard/Users/Login"
+          "Authorization:Basic {{.BASIC_AUTH}}"
+          "X-API-KEY:{{.YETIFORCE_API_KEY}}"
+          userName="{{.YETIFORCE_USER}}"
+          password="{{.YETIFORCE_PASSWORD}}" | jq -r '.result.token'
+    cmds:
+      - for: [ Leads, Accounts, Contacts, SSalesProcesses ]
+        cmd: >
+          http --ignore-stdin --verify=no
+          GET "{{.YETIFORCE_URL}}/webservice/WebserviceStandard/{{.ITEM}}/Fields"
+          "Authorization:Basic {{.BASIC_AUTH}}"
+          "X-API-KEY:{{.YETIFORCE_API_KEY}}"
+          "x-token:{{.TOKEN}}"
+
   yf:test:
     desc: "Login to YetiForce and fetch Contact record c2"
     vars:

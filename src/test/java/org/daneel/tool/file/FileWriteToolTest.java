@@ -1,4 +1,4 @@
-package org.daneel.tool;
+package org.daneel.tool.file;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -7,8 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import org.daneel.tool.file.FileWriteTool;
-import org.daneel.tool.file.SandboxFileSystem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

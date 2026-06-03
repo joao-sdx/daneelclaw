@@ -1,4 +1,4 @@
-package org.daneel.tool;
+package org.daneel.tool.date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

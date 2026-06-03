@@ -69,6 +69,17 @@ public class YetiForceCrmClient {
     return objectMapper.convertValue(result, new TypeReference<>() {});
   }
 
+  public Map<String, Object> getFields(String module) throws Exception {
+    var request =
+        HttpRequest.newBuilder()
+            .uri(URI.create(properties.getUrl() + API_BASE + module + "/Fields"))
+            .GET()
+            .build();
+    var raw = execute(request);
+    var result = objectMapper.readTree(raw).path("result");
+    return objectMapper.convertValue(result, new TypeReference<>() {});
+  }
+
   public Map<String, Object> createRecord(String module, Map<String, Object> data)
       throws Exception {
     var request =

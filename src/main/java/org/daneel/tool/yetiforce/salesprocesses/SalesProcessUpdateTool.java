@@ -29,7 +29,7 @@ public class SalesProcessUpdateTool implements DaneelToolInterface {
 
   @Override
   public String description() {
-    return "Updates an existing SalesProcesses record in YetiForce CRM. "
+    return "Updates an existing SSalesProcesses record in YetiForce CRM. "
         + "Pass only the fields you want to change alongside the required id.";
   }
 
@@ -37,7 +37,7 @@ public class SalesProcessUpdateTool implements DaneelToolInterface {
   public List<ToolProperty> properties() {
     var props = new ArrayList<ToolProperty>();
     props.add(new ToolProperty("id", "Record ID to update", "string", true));
-    fieldsConfig.getFields("SalesProcesses").stream()
+    fieldsConfig.getFields("SSalesProcesses").stream()
         .map(f -> new ToolProperty(f.name(), f.description(), f.type(), false))
         .forEach(props::add);
     return props;
@@ -50,14 +50,14 @@ public class SalesProcessUpdateTool implements DaneelToolInterface {
       return "Error: id is required";
     }
     var data = new HashMap<String, Object>();
-    for (var field : fieldsConfig.getFields("SalesProcesses")) {
+    for (var field : fieldsConfig.getFields("SSalesProcesses")) {
       var val = params.get(field.name());
       if (val != null && !val.toString().isBlank()) {
         data.put(field.name(), val);
       }
     }
     try {
-      var result = client.updateRecord("SalesProcesses", id.toString(), data);
+      var result = client.updateRecord("SSalesProcesses", id.toString(), data);
       log.info("yetiforce_sales_process_update id={}", id);
       return objectMapper.writeValueAsString(result);
     } catch (Exception e) {
